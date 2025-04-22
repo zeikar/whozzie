@@ -1,0 +1,14 @@
+{
+  "title": "Whozit - Random Person Selector",
+  "description": "A random person selector roulette website",
+  "home": {
+    "title": "Random Person Selector",
+    "addPerson": "Add Person",
+    "spin": "Spin the Wheel",
+    "reset": "Reset",
+    "noPersonAdded": "No person added yet",
+    "placeholder": "Enter name",
+    "language": "Language",
+    "result": "Selected Person"
+  }
+}
