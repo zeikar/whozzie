@@ -1,0 +1,17 @@
+{
+  "title": "Whozit - Who's it gonna be?",
+  "description": "Feeling lucky? Spin the wheel and see who gets picked!",
+  "home": {
+    "title": "Who's it gonna be? 🎯",
+    "addItem": "Add a Name",
+    "spin": "Spin That Wheel!",
+    "reset": "Start Over",
+    "noItemAdded": "No names added yet — don’t be shy!",
+    "placeholder": "Type a name here...",
+    "language": "Language",
+    "result": "🎉 The lucky one is...",
+    "confirm": "Got it!",
+    "removeFromRoulette": "Remove from Wheel",
+    "items": "Current Names"
+  }
+}

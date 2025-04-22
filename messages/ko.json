@@ -1,0 +1,17 @@
+{
+  "title": "Whozit - 누가 걸릴까? 랜덤 뽑기!",
+  "description": "오늘의 주인공은 누구?! 랜덤으로 사람을 뽑아주는 웹사이트 🎯",
+  "home": {
+    "title": "누가 뽑힐까?! 랜덤 룰렛 돌림판",
+    "addItem": "이름 추가하기",
+    "spin": "돌려돌려~!",
+    "reset": "다시 시작할래요",
+    "noItemAdded": "앗! 아직 이름이 하나도 없어요 🙈",
+    "placeholder": "여기에 이름을 써주세요!",
+    "language": "언어 설정",
+    "result": "🎉 뽑힌 사람은...",
+    "confirm": "오케이~!",
+    "removeFromRoulette": "이 사람은 빼기",
+    "items": "현재 인원 목록"
+  }
+}
