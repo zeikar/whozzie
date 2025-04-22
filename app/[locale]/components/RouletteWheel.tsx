@@ -2,7 +2,7 @@ import { useRef, useEffect } from "react";
 import { useRoulette } from "../context/RouletteContext";
 
 export default function RouletteWheel() {
-  const { people, rotationAngle, wheelRef, spinning } = useRoulette();
+  const { items, rotationAngle, wheelRef, spinning } = useRoulette();
   const localWheelRef = useRef<HTMLDivElement>(null);
 
   // ref 연결
@@ -13,13 +13,13 @@ export default function RouletteWheel() {
   }, [wheelRef]);
 
   // 몇 퍼센트씩 나눌지 계산
-  const slicePercent = 100 / people.length;
+  const slicePercent = 100 / items.length;
   // conic-gradient용 문자열 생성
-  const gradientSegments = people
+  const gradientSegments = items
     .map((_, i) => {
       const start = slicePercent * i;
       const end = slicePercent * (i + 1);
-      const hue = (i * 360) / people.length;
+      const hue = (i * 360) / items.length;
       return `hsl(${hue}, 70%, 60%) ${start}% ${end}%`;
     })
     .join(", ");
@@ -42,7 +42,7 @@ export default function RouletteWheel() {
         }}
       >
         {/* 이름 라벨들 */}
-        {people.map((person, i) => {
+        {items.map((item, i) => {
           // 각 조각의 중앙 각도
           const labelAngle = slicePercent * (i + 0.5) * 3.6; // 360도 기준으로 조정
           return (
@@ -62,7 +62,7 @@ export default function RouletteWheel() {
                   transform: `rotate(90deg)` /* 텍스트를 가독성 있게 회전 */,
                 }}
               >
-                {person}
+                {item}
               </span>
             </div>
           );

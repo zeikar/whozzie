@@ -3,12 +3,15 @@
   "description": "랜덤으로 사람을 뽑는 룰렛 웹사이트",
   "home": {
     "title": "랜덤 인원 선택기",
-    "addPerson": "인원 추가",
+    "addItem": "인원 추가",
     "spin": "룰렛 돌리기",
     "reset": "초기화",
-    "noPersonAdded": "아직 인원이 추가되지 않았습니다",
+    "noItemAdded": "아직 인원이 추가되지 않았습니다",
     "placeholder": "이름 입력",
     "language": "언어",
-    "result": "선택된 인원"
+    "result": "선택된 인원",
+    "confirm": "확인",
+    "removeFromRoulette": "룰렛에서 지우기",
+    "items": "인원"
   }
 }
