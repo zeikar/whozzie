@@ -1,17 +1,17 @@
 {
-  "title": "Whozit - Random Person Selector",
-  "description": "A random person selector roulette website",
+  "title": "Whozit - Who's it gonna be?",
+  "description": "Feeling lucky? Spin the wheel and see who gets picked!",
   "home": {
-    "title": "Random Person Selector",
-    "addItem": "Add Person",
-    "spin": "Spin the Wheel",
-    "reset": "Reset",
-    "noItemAdded": "No person added yet",
-    "placeholder": "Enter name",
+    "title": "Who's it gonna be? 🎯",
+    "addItem": "Add a Name",
+    "spin": "Spin That Wheel!",
+    "reset": "Start Over",
+    "noItemAdded": "No names added yet — don’t be shy!",
+    "placeholder": "Type a name here...",
     "language": "Language",
-    "result": "Selected Person",
-    "confirm": "Confirm",
-    "removeFromRoulette": "Remove from Roulette",
-    "items": "People"
+    "result": "🎉 The lucky one is...",
+    "confirm": "Got it!",
+    "removeFromRoulette": "Remove from Wheel",
+    "items": "Current Names"
   }
 }
