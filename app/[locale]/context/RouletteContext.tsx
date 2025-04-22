@@ -55,15 +55,21 @@ export function RouletteProvider({ children }: { children: ReactNode }) {
     const randomAngle = Math.floor(Math.random() * 360);
     const spinAngle = totalRotations * 360 + randomAngle;
     
-    // Calculate which person is selected based on the final angle
-    const degreePerPerson = 360 / people.length;
-    const normalizedAngle = randomAngle % 360;
-    const selectedIndex = Math.floor(normalizedAngle / degreePerPerson);
-    const selectedPerson = people[people.length - 1 - selectedIndex];
-    
     // Set the new rotation angle
     const newRotationAngle = rotationAngle + spinAngle;
     setRotationAngle(newRotationAngle);
+    
+    // Calculate which person is selected based on the final angle
+    const degreePerPerson = 360 / people.length;
+    
+    // 룰렛이 시계방향으로 회전하므로, 최종 각도의 반대 방향으로 인덱스 계산
+    // 시작 위치(0도)가 맨 위의 포인터 위치임을 감안
+    const finalAngleNormalized = (newRotationAngle % 360);
+    const selectedIndex = Math.floor(finalAngleNormalized / degreePerPerson) % people.length;
+    
+    // 룰렛 회전 방향과 일치하도록 인덱스 조정
+    const adjustedIndex = people.length - 1 - selectedIndex;
+    const selectedPerson = people[adjustedIndex];
     
     // Apply the rotation
     if (wheelRef.current) {
