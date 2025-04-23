@@ -16,6 +16,7 @@
     ],
     "addItem": "이름 추가하기",
     "spin": "돌려돌려~!",
+    "spinning": "돌아가는 중...",
     "reset": "다시 시작할래요",
     "noItemAdded": "앗! 아직 이름이 하나도 없어요 🙈",
     "placeholder": "여기에 이름을 써주세요!",

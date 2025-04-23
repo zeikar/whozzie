@@ -17,7 +17,7 @@ export default function RouletteControls() {
             : "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500"
         }`}
       >
-        {spinning ? "Spinning..." : t("spin")}
+        {spinning ? t("spinning") : t("spin")}
       </button>
       <button
         onClick={resetWheel}

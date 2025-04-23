@@ -17,7 +17,7 @@ export default function ClientPage() {
           <Link href="./wheel" className="block">
             <div className="relative h-48 w-full">
               <Image
-                src="/wheel.svg"
+                src="/thumbs/wheel.png"
                 alt="Wheel Random Selector"
                 fill
                 className="object-cover"
