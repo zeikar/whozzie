@@ -1,6 +1,7 @@
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import Footer from "./components/Footer";
 
 export default async function LocaleLayout({
   children,
@@ -18,7 +19,12 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <div className="min-h-screen flex flex-col py-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800">
+            {children}
+            <Footer />
+          </div>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

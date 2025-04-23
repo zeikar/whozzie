@@ -1,14 +1,14 @@
-import { useTranslations } from 'next-intl';
-import { useRoulette } from '../context/RouletteContext';
+import { useTranslations } from "next-intl";
+import { useWheel } from "../context/WheelContext";
 
-export default function PeopleList() {
-  const t = useTranslations('home');
-  const { items, removeItem } = useRoulette();
+export default function ItemList() {
+  const t = useTranslations("wheel");
+  const { items, removeItem } = useWheel();
 
   return (
     <div className="mb-6">
       <h2 className="text-lg font-semibold mb-2 text-gray-700 dark:text-gray-300">
-        {items.length > 0 ? `${items.length} ${t('items')}` : t('noItemAdded')}
+        {items.length > 0 ? `${items.length} ${t("items")}` : t("noItemAdded")}
       </h2>
       <ul className="space-y-2 max-h-60 overflow-y-auto">
         {items.map((item, index) => (

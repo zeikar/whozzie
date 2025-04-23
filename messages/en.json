@@ -1,17 +1,35 @@
 {
-  "title": "Whozit - Who's it gonna be?",
-  "description": "Feeling lucky? Spin the wheel and see who gets picked!",
-  "home": {
-    "title": "Who's it gonna be? 🎯",
-    "addItem": "Add a Name",
-    "spin": "Spin That Wheel!",
-    "reset": "Start Over",
-    "noItemAdded": "No names added yet — don’t be shy!",
-    "placeholder": "Type a name here...",
+  "title": "Whozzie - Who's it gonna be?",
+  "description": "Need to make a decision? Whozzie helps you choose randomly — from picking names to settling who goes first. Just spin and see!",
+  "keywords": [
+    "name picker",
+    "random picker",
+    "random name selector",
+    "roulette picker",
+    "spin the wheel",
+    "online wheel spinner",
+    "random decision tool"
+  ],
+  "wheel": {
+    "title": "Spin the Wheel and Pick a Name!",
+    "description": "Just enter the names, spin the wheel, and let Whozzie do the choosing — fun, fair, and totally random!",
+    "keywords": [
+      "random name wheel",
+      "spin the wheel",
+      "name picker wheel",
+      "roulette style selector",
+      "random decision spinner"
+    ],
+    "addItem": "Add Name",
+    "spin": "Spin the Wheel!",
+    "spinning": "Hold on... it's spinning!",
+    "reset": "Reset All",
+    "noItemAdded": "Oops! You need to add at least one name first",
+    "placeholder": "Enter a name...",
     "language": "Language",
-    "result": "🎉 The lucky one is...",
-    "confirm": "Got it!",
+    "result": "🎉 And the winner is...",
+    "confirm": "Okay!",
     "removeFromRoulette": "Remove from Wheel",
-    "items": "Current Names"
+    "items": "Name List"
   }
 }

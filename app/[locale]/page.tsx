@@ -1,8 +1,16 @@
-import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import ClientPage from "./ClientPage";
+import { Metadata } from "next";
+import { generateCommonMetadata } from "@/app/[locale]/utils/metadata";
+import HomePageClient from "./HomePageClient";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return generateCommonMetadata(locale);
+}
 
 export default function HomePage() {
-  const t = useTranslations("home");
-  return <ClientPage />;
+  return <HomePageClient />;
 }
