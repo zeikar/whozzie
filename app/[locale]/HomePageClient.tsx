@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function ClientPage() {
-  const t = useTranslations("wheel");
+  const t = useTranslations();
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -26,10 +26,10 @@ export default function ClientPage() {
             </div>
             <div className="p-4">
               <h2 className="text-xl font-semibold mb-2">
-                {t("wheelTitle") || "Wheel Random Selector"}
+                {t("wheel.title") || "Wheel Random Selector"}
               </h2>
               <p className="text-gray-600">
-                {t("wheelDescription") ||
+                {t("wheel.description") ||
                   "Spin the wheel to randomly select a person or an item."}
               </p>
             </div>
