@@ -1,8 +1,12 @@
 import { useTranslations } from "next-intl";
-import Link from "next/link";
+import LocaleSelector from "./LocaleSelector";
 
-export default function Header() {
-  const t = useTranslations("home");
+interface HeaderProps {
+  namespace: string;
+}
+
+export default function Header({ namespace }: HeaderProps) {
+  const t = useTranslations(namespace);
 
   return (
     <header className="w-full max-w-4xl mx-auto mb-8">
@@ -10,22 +14,7 @@ export default function Header() {
         <h1 className="text-3xl font-bold text-purple-700 dark:text-purple-300">
           {t("title")}
         </h1>
-        <div className="flex space-x-2">
-          <Link
-            href="/en"
-            className="px-3 py-1 rounded-md text-sm bg-white dark:bg-gray-700 shadow hover:shadow-md transition-shadow"
-            prefetch={false}
-          >
-            English
-          </Link>
-          <Link
-            href="/ko"
-            className="px-3 py-1 rounded-md text-sm bg-white dark:bg-gray-700 shadow hover:shadow-md transition-shadow"
-            prefetch={false}
-          >
-            한국어
-          </Link>
-        </div>
+        <LocaleSelector />
       </div>
     </header>
   );

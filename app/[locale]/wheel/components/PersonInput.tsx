@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import { useWheel } from "../context/WheelContext";
 
 export default function ItemInput() {
-  const t = useTranslations("home");
+  const t = useTranslations("wheel");
   const { addItem } = useWheel();
   const [newItem, setNewItem] = useState("");
 

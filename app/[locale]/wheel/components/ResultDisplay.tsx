@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useWheel } from "../context/WheelContext";
 
 export default function ResultDisplay() {
-  const t = useTranslations("home");
+  const t = useTranslations("wheel");
   const { resultIndex, items, showResult, closeResult, removeSelectedItem } =
     useWheel();
 

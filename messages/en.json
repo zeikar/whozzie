@@ -1,7 +1,7 @@
 {
-  "title": "Whozit - Who's it gonna be?",
+  "title": "Whozzie - Who's it gonna be?",
   "description": "Feeling lucky? Spin the wheel and see who gets picked!",
-  "home": {
+  "wheel": {
     "title": "Who's it gonna be? 🎯",
     "addItem": "Add a Name",
     "spin": "Spin That Wheel!",

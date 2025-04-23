@@ -1,11 +1,9 @@
-"use client";
-
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function ClientPage() {
-  const t = useTranslations("home");
+  const t = useTranslations("wheel");
 
   return (
     <div className="container mx-auto px-4 py-8">

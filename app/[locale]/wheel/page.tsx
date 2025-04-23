@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Metadata } from "next";
 import WheelPageClient from "./components/WheelPageClient";
+import Header from "../components/Header";
 
 // This generates metadata for SEO
 export async function generateMetadata(): Promise<Metadata> {
@@ -19,5 +20,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function WheelPage() {
-  return <WheelPageClient />;
+  return (
+    <>
+      <Header namespace={"wheel"} />
+      <WheelPageClient />
+    </>
+  );
 }
