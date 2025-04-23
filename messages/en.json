@@ -1,8 +1,23 @@
 {
   "title": "Whozzie - Who's it gonna be?",
   "description": "Feeling lucky? Spin the wheel and see who gets picked!",
+  "keywords": [
+    "random picker",
+    "roulette",
+    "wheel spinner",
+    "random selector",
+    "name picker"
+  ],
   "wheel": {
     "title": "Who's it gonna be? 🎯",
+    "description": "Spin the wheel and let fate decide!",
+    "keywords": [
+      "random wheel",
+      "wheel spinner",
+      "random name picker",
+      "decision maker",
+      "random selector"
+    ],
     "addItem": "Add a Name",
     "spin": "Spin That Wheel!",
     "reset": "Start Over",
