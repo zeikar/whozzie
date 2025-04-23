@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function ClientPage() {
+export default function HomePageClient() {
   const t = useTranslations();
 
   return (

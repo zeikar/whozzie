@@ -1,7 +1,7 @@
 "use client";
 
-import PeopleList from "./PeopleList";
-import PersonInput from "./PersonInput";
+import ItemList from "./ItemList";
+import PersonInput from "./ItemInput";
 import ResultDisplay from "./ResultDisplay";
 import Wheel from "./Wheel";
 import WheelControls from "./WheelControls";
@@ -15,7 +15,7 @@ export default function WheelPageClient() {
           <div className="w-full flex flex-col sm:flex-row gap-6">
             <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
               <PersonInput />
-              <PeopleList />
+              <ItemList />
               <WheelControls />
             </div>
 

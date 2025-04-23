@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { useWheel } from "../context/WheelContext";
 
-export default function PeopleList() {
+export default function ItemList() {
   const t = useTranslations("wheel");
   const { items, removeItem } = useWheel();
 

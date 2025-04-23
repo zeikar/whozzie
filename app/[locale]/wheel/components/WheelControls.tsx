@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { useWheel } from "../context/WheelContext";
 
-export default function RouletteControls() {
+export default function WheelControls() {
   const t = useTranslations("wheel");
   const { spinWheel, resetWheel, items, spinning } = useWheel();
   const disabled = items.length < 1;

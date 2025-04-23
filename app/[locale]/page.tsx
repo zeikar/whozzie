@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { generateCommonMetadata } from "@/app/[locale]/utils/metadata";
-import ClientPage from "./HomePageClient";
+import HomePageClient from "./HomePageClient";
 
 export async function generateMetadata({
   params,
@@ -12,5 +12,5 @@ export async function generateMetadata({
 }
 
 export default function HomePage() {
-  return <ClientPage />;
+  return <HomePageClient />;
 }
