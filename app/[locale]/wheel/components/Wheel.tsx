@@ -1,8 +1,8 @@
 import { useRef, useEffect } from "react";
-import { useRoulette } from "../context/RouletteContext";
+import { useWheel } from "../context/WheelContext";
 
 export default function RouletteWheel() {
-  const { items, rotationAngle, wheelRef, spinning } = useRoulette();
+  const { items, rotationAngle, wheelRef, spinning } = useWheel();
   const localWheelRef = useRef<HTMLDivElement>(null);
 
   // ref 연결
