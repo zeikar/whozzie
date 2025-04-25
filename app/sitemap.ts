@@ -7,27 +7,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Initialize the sitemap entries array
   const sitemapEntries: MetadataRoute.Sitemap = [];
-
   // For each defined route
   routes.forEach(({ route, priority }) => {
-    // Add entry for default locale (root) - only for home page
-    if (route === "/" && defaultLocale === "en") {
-      sitemapEntries.push({
-        url: `${siteUrl}`,
-        lastModified: currentDate,
-        changeFrequency: "daily",
-        priority: priority,
-      });
-    }
-
     // Add entries for each locale
     locales.forEach((locale) => {
-      sitemapEntries.push({
-        url: `${siteUrl}/${locale}${route === "/" ? "" : route}`,
-        lastModified: currentDate,
-        changeFrequency: "weekly",
-        priority: route === "/" ? priority : priority * 0.9,
-      });
+      // For English (default locale), don't include locale prefix
+      if (locale === defaultLocale) {
+        sitemapEntries.push({
+          url: `${siteUrl}${route}`,
+          lastModified: currentDate,
+          changeFrequency: "daily",
+          priority: priority,
+        });
+      } else {
+        // For other locales, include locale prefix
+        sitemapEntries.push({
+          url: `${siteUrl}/${locale}${route === "/" ? "" : route}`,
+          lastModified: currentDate,
+          changeFrequency: "weekly",
+          priority: route === "/" ? priority : priority * 0.9,
+        });
+      }
     });
   });
 
