@@ -14,6 +14,7 @@ export default function Wheel() {
 
   // 몇 퍼센트씩 나눌지 계산
   const slicePercent = 100 / items.length;
+
   // 룰렛을 위한 진한 파스텔 톤 색상 팔레트 정의
   const distinctColors = [
     "#FF9FB2", // 진한 파스텔 핑크
@@ -48,16 +49,23 @@ export default function Wheel() {
       return `${distinctColors[colorIndex]} ${start}% ${end}%`;
     })
     .join(", ");
-
   return (
-    <div className="relative w-72 h-72 sm:w-96 sm:h-96">
-      {/* 바깥 그림자 */}
-      <div className="absolute inset-0 rounded-full shadow-lg"></div>
+    <div className="relative w-80 h-80 sm:w-[480px] sm:h-[480px] md:w-[550px] md:h-[550px]">
+      {/* 하단 포인터 (화살표) */}
+      <div className="absolute top-1 left-1/2 transform -translate-x-1/2 z-10">
+        <div className="w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-t-[40px] border-t-purple-700"></div>
+      </div>
+
+      {/* 바깥 그림자와 강조효과 */}
+      <div className="absolute inset-0 rounded-full shadow-xl bg-gradient-to-br from-purple-200 to-transparent opacity-50"></div>
+
+      {/* Glare effect overlay */}
+      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white to-transparent opacity-20 pointer-events-none z-[1]"></div>
 
       {/* 룰렛 판 */}
       <div
         ref={localWheelRef}
-        className="absolute w-full h-full rounded-full border-8 border-purple-600 overflow-hidden shadow-inner"
+        className="absolute w-full h-full rounded-full border-8 border-purple-700 overflow-hidden shadow-inner"
         style={{
           transform: `rotate(${rotationAngle}deg)`,
           transition: spinning
@@ -97,10 +105,11 @@ export default function Wheel() {
               style={{
                 transform: `
                   rotate(${labelAngle}deg)      /* 조각 중심으로 회전 */
-                  translateY(-300%)             /* 바깥쪽으로 약간 이동 */
+                  translateY(-320%)             /* 바깥쪽으로 이동 */
                 `,
               }}
             >
+              {" "}
               <span
                 className="block text-white font-bold whitespace-nowrap px-2 py-1"
                 style={{
@@ -119,8 +128,8 @@ export default function Wheel() {
         <div
           className="absolute rounded-full bg-white dark:bg-gray-700 shadow-md border-4 border-purple-600"
           style={{
-            width: "10%",
-            height: "10%",
+            width: "15%",
+            height: "15%",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
@@ -128,20 +137,6 @@ export default function Wheel() {
             zIndex: 5,
           }}
         />
-      </div>
-
-      {/* 포인터 */}
-      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-        {/* 삼각형 포인터 (위에서 아래로) */}
-        <div className="w-8 h-10 flex justify-center items-start">
-          <div
-            className="w-0 h-0 
-            border-l-[12px] border-l-transparent 
-            border-r-[12px] border-r-transparent 
-            border-t-[24px] border-t-red-600
-            filter drop-shadow-md"
-          ></div>
-        </div>
       </div>
     </div>
   );
