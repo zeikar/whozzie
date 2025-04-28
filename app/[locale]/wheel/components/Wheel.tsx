@@ -80,15 +80,15 @@ export default function Wheel() {
           const labelAngle = slicePercent * (i + 0.5) * 3.6; // 360도 기준으로 조정
           // 텍스트 길이에 따라 폰트 크기 조절
           const textLength = item.length;
-          let fontSize = "1.25rem"; // 기본 크기 (text-xl)
+          let fontSizeClass = "text-2xl"; // 기본 크기 (text-2xl)
           let maxLength = 10; // 기본 최대 길이
 
           // 텍스트 길이에 따라 폰트 크기 조절
           if (textLength > 12) {
-            fontSize = "0.875rem"; // 긴 텍스트는 작게 (text-sm)
+            fontSizeClass = "text-lg"; // 긴 텍스트
             maxLength = 14;
           } else if (textLength > 8) {
-            fontSize = "1rem"; // 중간 길이 텍스트 (text-base)
+            fontSizeClass = "text-xl"; // 중간 길이 텍스트
             maxLength = 12;
           }
 
@@ -105,17 +105,19 @@ export default function Wheel() {
               style={{
                 transform: `
                   rotate(${labelAngle}deg)      /* 조각 중심으로 회전 */
-                  translateY(-320%)             /* 바깥쪽으로 이동 */
+                  translateY(-400%)             /* 바깥쪽으로 더 멀리 이동 */
                 `,
+                width: "40%" /* 원의 반지름보다 약간 작게 설정 */,
               }}
             >
               {" "}
               <span
-                className="block text-white font-bold whitespace-nowrap px-2 py-1"
+                className={`block text-white font-bold px-2 py-1 ${fontSizeClass} text-center text-ellipsis`}
                 style={{
                   transform: `rotate(90deg)` /* 텍스트를 가독성 있게 회전 */,
-                  fontSize: fontSize,
                   textShadow: "1px 1px 2px rgba(0,0,0,0.7)",
+                  maxWidth: "100%",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {displayText}
@@ -126,10 +128,10 @@ export default function Wheel() {
 
         {/* 가운데 원 */}
         <div
-          className="absolute rounded-full bg-white dark:bg-gray-700 shadow-md border-4 border-purple-600"
+          className="absolute rounded-full bg-purple-100 dark:bg-gray-700 shadow-md border-4 border-purple-600"
           style={{
-            width: "15%",
-            height: "15%",
+            width: "10%",
+            height: "10%",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",

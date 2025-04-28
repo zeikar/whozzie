@@ -14,7 +14,7 @@ export default function WheelPageClient() {
         <main className="w-full max-w-7xl mx-auto flex flex-col items-center px-4">
           <div className="w-full flex flex-col lg:flex-row gap-8">
             {/* Controls Panel */}
-            <div className="lg:flex-1 w-full bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-purple-100 dark:border-purple-900">
+            <div className="lg:flex-1 w-full max-w-lg bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-purple-100 dark:border-purple-900">
               <PersonInput />
               <ItemList />
               <WheelControls />
