@@ -74,6 +74,33 @@ export default function Wheel() {
           background: `conic-gradient(${gradientSegments})`,
         }}
       >
+        {/* 내부 경계선 - 각 영역 사이에 선 추가 (아이템이 2개 이상일 때만) */}
+        {items.length > 1 &&
+          items.map((_, i) => {
+            // 각 분할선의 각도 계산
+            const angle = (360 / items.length) * i;
+            return (
+              <div
+                key={`divider-group-${i}`}
+                className="divider-group"
+                style={{ position: "absolute", width: "100%", height: "100%" }}
+              >
+                {/* 흰색 선 */}
+                <div
+                  className="absolute top-0 left-1/2 bg-white"
+                  style={{
+                    width: "3px",
+                    height: "50%",
+                    transformOrigin: "bottom center",
+                    transform: `translateX(-50%) rotate(${angle}deg)`,
+                    zIndex: 3,
+                    opacity: 0.9,
+                    boxShadow: "0 0 4px rgba(0, 0, 0, 0.6)",
+                  }}
+                />
+              </div>
+            );
+          })}
         {/* 이름 라벨들 */}
         {items.map((item, i) => {
           // 각 조각의 중앙 각도
