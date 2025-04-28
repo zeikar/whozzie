@@ -50,10 +50,10 @@ export default function Wheel() {
     })
     .join(", ");
   return (
-    <div className="relative w-80 h-80 sm:w-[480px] sm:h-[480px] md:w-[550px] md:h-[550px]">
+    <div className="relative w-[90vw] h-[90vw] max-w-[550px] max-h-[550px] overflow-hidden">
       {/* 하단 포인터 (화살표) */}
       <div className="absolute top-1 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-t-[40px] border-t-purple-700"></div>
+        <div className="w-0 h-0 border-l-[16px] sm:border-l-[20px] border-l-transparent border-r-[16px] sm:border-r-[20px] border-r-transparent border-t-[30px] sm:border-t-[40px] border-t-purple-700"></div>
       </div>
 
       {/* 바깥 그림자와 강조효과 */}
@@ -80,23 +80,40 @@ export default function Wheel() {
           const labelAngle = slicePercent * (i + 0.5) * 3.6; // 360도 기준으로 조정
           // 텍스트 길이에 따라 폰트 크기 조절
           const textLength = item.length;
-          let fontSizeClass = "text-2xl"; // 기본 크기 (text-2xl)
-          let maxLength = 10; // 기본 최대 길이
 
-          // 텍스트 길이에 따라 폰트 크기 조절
+          // 화면 크기와 텍스트 길이에 따라 동적으로 폰트 사이즈 조절
+          let fontSizeClass = "";
+
+          // 텍스트 길이에 따라 폰트 크기 조절 (더 길수록 작은 폰트)
           if (textLength > 12) {
-            fontSizeClass = "text-lg"; // 긴 텍스트
-            maxLength = 14;
+            fontSizeClass = "text-xs sm:text-sm md:text-lg"; // 긴 텍스트
           } else if (textLength > 8) {
-            fontSizeClass = "text-xl"; // 중간 길이 텍스트
-            maxLength = 12;
+            fontSizeClass = "text-sm sm:text-base md:text-xl"; // 중간 길이 텍스트
+          } else {
+            fontSizeClass = "text-base sm:text-xl md:text-2xl"; // 짧은 텍스트
           }
 
-          // 텍스트가 최대 길이를 초과하면 말줄임표 처리
-          const displayText =
-            item.length > maxLength
-              ? `${item.substring(0, maxLength)}...`
+          // 화면 크기별 최대 표시 길이 - 작은 화면일수록 짧게, 텍스트가 길수록 더 짧게 표시
+          let mobileMaxLength = textLength > 12 ? 5 : textLength > 8 ? 7 : 10;
+          let tabletMaxLength = textLength > 12 ? 8 : textLength > 8 ? 10 : 14;
+          let desktopMaxLength = textLength > 12 ? 12 : textLength; // 데스크탑에서는 길면 12자까지, 아니면 전체
+
+          // 반응형에 맞게 텍스트 준비 (특정 길이 초과시 말줄임표 처리)
+          const displayTextMobile =
+            textLength > mobileMaxLength
+              ? `${item.substring(0, mobileMaxLength)}...`
               : item;
+          const displayTextTablet =
+            textLength > tabletMaxLength
+              ? `${item.substring(0, tabletMaxLength)}...`
+              : item;
+          const displayTextDesktop =
+            textLength > desktopMaxLength
+              ? `${item.substring(0, desktopMaxLength)}...`
+              : item;
+
+          // 화면 크기에 따라 위치 조정 (모바일에서는 더 안쪽으로)
+          const translateYValue = "clamp(-350%, -400%, -450%)";
 
           return (
             <div
@@ -105,23 +122,31 @@ export default function Wheel() {
               style={{
                 transform: `
                   rotate(${labelAngle}deg)      /* 조각 중심으로 회전 */
-                  translateY(-400%)             /* 바깥쪽으로 더 멀리 이동 */
+                  translateY(${translateYValue}) /* 화면 크기에 따라 동적으로 위치 조정 */
                 `,
                 width: "40%" /* 원의 반지름보다 약간 작게 설정 */,
               }}
             >
-              {" "}
-              <span
-                className={`block text-white font-bold px-2 py-1 ${fontSizeClass} text-center text-ellipsis`}
-                style={{
-                  transform: `rotate(90deg)` /* 텍스트를 가독성 있게 회전 */,
-                  textShadow: "1px 1px 2px rgba(0,0,0,0.7)",
-                  maxWidth: "100%",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {displayText}
-              </span>
+              <div className="relative">
+                <span
+                  className={`block text-white font-bold px-1 py-0.5 sm:px-2 sm:py-1 ${fontSizeClass} text-center`}
+                  style={{
+                    transform: `rotate(90deg)` /* 텍스트를 가독성 있게 회전 */,
+                    textShadow:
+                      "2px 2px 4px rgba(0,0,0,0.9)" /* 더 진한 그림자로 가독성 향상 */,
+                    maxWidth: "100%",
+                    whiteSpace: "nowrap",
+                    borderRadius: "4px" /* 배경에 약간의 둥근 모서리 적용 */,
+                  }}
+                >
+                  {/* 화면 크기별로 다른 텍스트 표시 */}
+                  <span className="block md:hidden">{displayTextMobile}</span>
+                  <span className="hidden sm:block md:hidden">
+                    {displayTextTablet}
+                  </span>
+                  <span className="hidden md:block">{displayTextDesktop}</span>
+                </span>
+              </div>
             </div>
           );
         })}
