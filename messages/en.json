@@ -30,6 +30,7 @@
     "result": "🎉 And the winner is...",
     "confirm": "Okay!",
     "removeFromRoulette": "Remove from Wheel",
-    "items": "Name List"
+    "items": "Name List",
+    "remove": "Remove"
   }
 }

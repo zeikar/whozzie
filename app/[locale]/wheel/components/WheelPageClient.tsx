@@ -10,16 +10,17 @@ import { WheelProvider } from "../context/WheelContext";
 export default function WheelPageClient() {
   return (
     <WheelProvider>
-      <div className="flex flex-col items-center">
-        <main className="w-full max-w-4xl mx-auto flex flex-col items-center">
-          <div className="w-full flex flex-col sm:flex-row gap-6">
-            <div className="flex-1 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+      <div className="flex flex-col items-center py-8">
+        <main className="w-full max-w-7xl mx-auto flex flex-col items-center px-4">
+          <div className="w-full flex flex-col lg:flex-row gap-8">
+            {/* Controls Panel */}
+            <div className="lg:flex-1 w-full max-w-lg bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-purple-100 dark:border-purple-900">
               <PersonInput />
               <ItemList />
               <WheelControls />
             </div>
-
-            <div className="flex-1 flex flex-col items-center">
+            {/* Wheel Display */}{" "}
+            <div className="lg:flex-1 w-full flex flex-col items-center justify-center py-8 px-4">
               <Wheel />
               <ResultDisplay />
             </div>
