@@ -15,7 +15,7 @@ export default function ItemInput() {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.nativeEvent.isComposing) {
       handleAddItem();
     }
   };
