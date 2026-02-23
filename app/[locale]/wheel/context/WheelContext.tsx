@@ -80,13 +80,13 @@ export function WheelProvider({ children }: { children: ReactNode }) {
     // Calculate which item is selected based on the final angle
     const degreePerItem = 360 / items.length;
 
-    // 룰렛이 시계방향으로 회전하므로, 최종 각도의 반대 방향으로 인덱스 계산
-    // 시작 위치(0도)가 맨 위의 포인터 위치임을 감안
+    // Since the wheel rotates clockwise, calculate index in the opposite direction of the final angle
+    // The starting position (0 degrees) corresponds to the top pointer
     const finalAngleNormalized = newRotationAngle % 360;
     const selectedIndex =
       Math.floor(finalAngleNormalized / degreePerItem) % items.length;
 
-    // 룰렛 회전 방향과 일치하도록 인덱스 조정
+    // Adjust index to match wheel rotation direction
     const adjustedIndex = items.length - 1 - selectedIndex;
 
     // Apply the rotation

@@ -5,64 +5,64 @@ export default function Wheel() {
   const { items, rotationAngle, wheelRef, spinning } = useWheel();
   const localWheelRef = useRef<HTMLDivElement>(null);
 
-  // ref 연결
+  // Connect ref
   useEffect(() => {
     if (localWheelRef.current && wheelRef) {
       wheelRef.current = localWheelRef.current;
     }
   }, [wheelRef]);
 
-  // 몇 퍼센트씩 나눌지 계산
+  // Calculate percentage per slice
   const slicePercent = 100 / items.length;
 
-  // 룰렛을 위한 진한 파스텔 톤 색상 팔레트 정의
+  // Deep pastel color palette for the wheel
   const distinctColors = [
-    "#FF9FB2", // 진한 파스텔 핑크
-    "#FFD166", // 진한 파스텔 옐로우
-    "#C8A2D4", // 진한 라벤더
-    "#7D6B91", // 진한 보라
-    "#CD6BA3", // 진한 라일락
-    "#F7A9BC", // 진한 분홍
-    "#FFBEA3", // 진한 피치
-    "#8FDAC1", // 진한 민트
-    "#9BB0DD", // 진한 베이비 블루
-    "#D6BED1", // 진한 라일락
-    "#A0CED9", // 진한 시안
-    "#6CC3BC", // 진한 아쿠아마린
-    "#ADC178", // 진한 라임
-    "#C8C6AF", // 진한 올리브
-    "#E1DAC8", // 진한 아이보리
-    "#89C489", // 진한 민트
-    "#EEA5BD", // 진한 로즈
-    "#A8CFE7", // 진한 하늘색
-    "#FAA0A0", // 진한 살구색
-    "#A78ECC", // 진한 퍼플
+    "#FF9FB2", // Deep pastel pink
+    "#FFD166", // Deep pastel yellow
+    "#C8A2D4", // Deep lavender
+    "#7D6B91", // Deep purple
+    "#CD6BA3", // Deep lilac
+    "#F7A9BC", // Deep pink
+    "#FFBEA3", // Deep peach
+    "#8FDAC1", // Deep mint
+    "#9BB0DD", // Deep baby blue
+    "#D6BED1", // Deep lilac
+    "#A0CED9", // Deep cyan
+    "#6CC3BC", // Deep aquamarine
+    "#ADC178", // Deep lime
+    "#C8C6AF", // Deep olive
+    "#E1DAC8", // Deep ivory
+    "#89C489", // Deep mint
+    "#EEA5BD", // Deep rose
+    "#A8CFE7", // Deep sky blue
+    "#FAA0A0", // Deep apricot
+    "#A78ECC", // Deep purple
   ];
 
-  // conic-gradient용 문자열 생성
+  // Build conic-gradient string
   const gradientSegments = items
     .map((_, i) => {
       const start = slicePercent * i;
       const end = slicePercent * (i + 1);
-      // 색상 팔레트에서 색상 선택 (순환)
+      // Pick color from palette (cycling)
       const colorIndex = i % distinctColors.length;
       return `${distinctColors[colorIndex]} ${start}% ${end}%`;
     })
     .join(", ");
   return (
     <div className="relative w-[90vw] h-[90vw] max-w-[550px] max-h-[550px] overflow-hidden">
-      {/* 하단 포인터 (화살표) */}
+      {/* Top pointer (arrow) */}
       <div className="absolute top-1 left-1/2 transform -translate-x-1/2 z-10">
         <div className="w-0 h-0 border-l-[16px] sm:border-l-[20px] border-l-transparent border-r-[16px] sm:border-r-[20px] border-r-transparent border-t-[30px] sm:border-t-[40px] border-t-purple-700"></div>
       </div>
 
-      {/* 바깥 그림자와 강조효과 */}
+      {/* Outer shadow and highlight effect */}
       <div className="absolute inset-0 rounded-full shadow-xl bg-gradient-to-br from-purple-200 to-transparent opacity-50"></div>
 
       {/* Glare effect overlay */}
       <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white to-transparent opacity-20 pointer-events-none z-[1]"></div>
 
-      {/* 룰렛 판 */}
+      {/* Wheel disc */}
       <div
         ref={localWheelRef}
         className="absolute w-full h-full rounded-full border-8 border-purple-700 overflow-hidden shadow-inner"
@@ -74,10 +74,10 @@ export default function Wheel() {
           background: `conic-gradient(${gradientSegments})`,
         }}
       >
-        {/* 내부 경계선 - 각 영역 사이에 선 추가 (아이템이 2개 이상일 때만) */}
+        {/* Segment dividers - shown only when 2+ items */}
         {items.length > 1 &&
           items.map((_, i) => {
-            // 각 분할선의 각도 계산
+            // Calculate angle for each divider
             const angle = (360 / items.length) * i;
             return (
               <div
@@ -85,7 +85,7 @@ export default function Wheel() {
                 className="divider-group"
                 style={{ position: "absolute", width: "100%", height: "100%" }}
               >
-                {/* 흰색 선 */}
+                {/* White divider line */}
                 <div
                   className="absolute top-0 left-1/2 bg-white"
                   style={{
@@ -101,31 +101,30 @@ export default function Wheel() {
               </div>
             );
           })}
-        {/* 이름 라벨들 */}
+        {/* Item labels */}
         {items.map((item, i) => {
-          // 각 조각의 중앙 각도
-          const labelAngle = slicePercent * (i + 0.5) * 3.6; // 360도 기준으로 조정
-          // 텍스트 길이에 따라 폰트 크기 조절
+          // Center angle of each slice (adjusted to 360 degrees)
+          const labelAngle = slicePercent * (i + 0.5) * 3.6;
           const textLength = item.length;
 
-          // 화면 크기와 텍스트 길이에 따라 동적으로 폰트 사이즈 조절
+          // Dynamically adjust font size based on screen size and text length
           let fontSizeClass = "";
 
-          // 텍스트 길이에 따라 폰트 크기 조절 (더 길수록 작은 폰트)
+          // Smaller font for longer text
           if (textLength > 12) {
-            fontSizeClass = "text-xs sm:text-sm md:text-lg"; // 긴 텍스트
+            fontSizeClass = "text-xs sm:text-sm md:text-lg"; // Long text
           } else if (textLength > 8) {
-            fontSizeClass = "text-sm sm:text-base md:text-xl"; // 중간 길이 텍스트
+            fontSizeClass = "text-sm sm:text-base md:text-xl"; // Medium text
           } else {
-            fontSizeClass = "text-base sm:text-xl md:text-2xl"; // 짧은 텍스트
+            fontSizeClass = "text-base sm:text-xl md:text-2xl"; // Short text
           }
 
-          // 화면 크기별 최대 표시 길이 - 작은 화면일수록 짧게, 텍스트가 길수록 더 짧게 표시
+          // Max display length per screen size - shorter on smaller screens
           let mobileMaxLength = textLength > 12 ? 5 : textLength > 8 ? 7 : 10;
           let tabletMaxLength = textLength > 12 ? 8 : textLength > 8 ? 10 : 14;
-          let desktopMaxLength = textLength > 12 ? 12 : textLength; // 데스크탑에서는 길면 12자까지, 아니면 전체
+          let desktopMaxLength = textLength > 12 ? 12 : textLength; // Up to 12 chars on desktop, full text if shorter
 
-          // 반응형에 맞게 텍스트 준비 (특정 길이 초과시 말줄임표 처리)
+          // Prepare truncated text per breakpoint
           const displayTextMobile =
             textLength > mobileMaxLength
               ? `${item.substring(0, mobileMaxLength)}...`
@@ -139,7 +138,7 @@ export default function Wheel() {
               ? `${item.substring(0, desktopMaxLength)}...`
               : item;
 
-          // 화면 크기에 따라 위치 조정 (모바일에서는 더 안쪽으로)
+          // Adjust label position by screen size
           const translateYValue = "clamp(-350%, -400%, -450%)";
 
           return (
@@ -148,25 +147,25 @@ export default function Wheel() {
               className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
               style={{
                 transform: `
-                  rotate(${labelAngle}deg)      /* 조각 중심으로 회전 */
-                  translateY(${translateYValue}) /* 화면 크기에 따라 동적으로 위치 조정 */
+                  rotate(${labelAngle}deg)      /* Rotate to slice center */
+                  translateY(${translateYValue}) /* Dynamically offset by screen size */
                 `,
-                width: "40%" /* 원의 반지름보다 약간 작게 설정 */,
+                width: "40%" /* Slightly smaller than the wheel radius */,
               }}
             >
               <div className="relative">
                 <span
                   className={`block text-white font-bold px-1 py-0.5 sm:px-2 sm:py-1 ${fontSizeClass} text-center`}
                   style={{
-                    transform: `rotate(90deg)` /* 텍스트를 가독성 있게 회전 */,
+                    transform: `rotate(90deg)` /* Rotate text for readability */,
                     textShadow:
-                      "2px 2px 4px rgba(0,0,0,0.9)" /* 더 진한 그림자로 가독성 향상 */,
+                      "2px 2px 4px rgba(0,0,0,0.9)" /* Deeper shadow for better readability */,
                     maxWidth: "100%",
                     whiteSpace: "nowrap",
-                    borderRadius: "4px" /* 배경에 약간의 둥근 모서리 적용 */,
+                    borderRadius: "4px" /* Slightly rounded corners */,
                   }}
                 >
-                  {/* 화면 크기별로 다른 텍스트 표시 */}
+                  {/* Display different text per screen size */}
                   <span className="block md:hidden">{displayTextMobile}</span>
                   <span className="hidden sm:block md:hidden">
                     {displayTextTablet}
@@ -178,7 +177,7 @@ export default function Wheel() {
           );
         })}
 
-        {/* 가운데 원 */}
+        {/* Center circle */}
         <div
           className="absolute rounded-full bg-purple-100 dark:bg-gray-700 shadow-md border-4 border-purple-600"
           style={{
