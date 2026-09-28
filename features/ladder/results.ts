@@ -3,9 +3,13 @@
  * fills them in; typing into any of them switches to custom and keeps the text.
  */
 
+import { MAX_PLAYERS } from "./ladder";
+
 export type Preset = "winner" | "order" | "custom";
 
 export const PRESETS: readonly Preset[] = ["winner", "order", "custom"];
+
+export const MAX_RESULT_LENGTH = 24;
 
 export type Results = {
   preset: Preset;
@@ -27,4 +31,14 @@ export function edit(results: Results, showing: readonly string[], index: number
   const custom = [...showing, ...(results.preset === "custom" ? results.custom.slice(showing.length) : [])];
   custom[index] = text;
   return { preset: "custom", custom };
+}
+
+/** Results saved on an earlier visit, or undefined if they aren't ones the card could have written. */
+export function parseResults(value: unknown): Results | undefined {
+  if (typeof value !== "object" || value === null || !("preset" in value) || !("custom" in value)) return undefined;
+  const { preset, custom } = value;
+  const known = PRESETS.find((option) => option === preset);
+  if (known === undefined || !Array.isArray(custom) || custom.length > MAX_PLAYERS) return undefined;
+  const texts = custom.filter((text): text is string => typeof text === "string" && text.length <= MAX_RESULT_LENGTH);
+  return texts.length === custom.length ? { preset: known, custom: texts } : undefined;
 }

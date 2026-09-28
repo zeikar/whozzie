@@ -5,9 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { TextInput } from "@/components/ui/TextInput";
 import { MAX_PLAYERS, isPlayable } from "./ladder";
-import { PRESETS, type Preset } from "./results";
-
-const MAX_RESULT_LENGTH = 24;
+import { MAX_RESULT_LENGTH, PRESETS, type Preset } from "./results";
 
 /** The results to hide along the bottom of the ladder: one input per name, plus presets. */
 export function ResultsCard({
@@ -23,7 +21,7 @@ export function ResultsCard({
   values: readonly string[];
   onPreset: (preset: Preset) => void;
   onEdit: (index: number, value: string) => void;
-  /** Freeze editing while a line is being traced. */
+  /** Freeze editing once a line is traced: from then on a changed result could steer the round. */
   locked: boolean;
 }) {
   const t = useTranslations("ladder.results");
@@ -44,7 +42,7 @@ export function ResultsCard({
           <ol className="mt-4 grid grid-cols-2 gap-x-3 gap-y-2">
             {values.map((value, index) => (
               <li key={index} className="flex min-w-0 items-center gap-1.5">
-                <span aria-hidden className="w-5 shrink-0 text-right font-hand text-lg text-ink-faint">
+                <span aria-hidden className="w-5 shrink-0 text-right text-sm text-ink-faint tabular-nums">
                   {index + 1}
                 </span>
                 <TextInput
@@ -59,7 +57,7 @@ export function ResultsCard({
               </li>
             ))}
           </ol>
-          <p className="mt-3 text-sm text-ink-soft">{t("hint")}</p>
+          <p className="mt-3 text-sm text-ink-soft">{locked ? t("locked") : t("hint")}</p>
         </>
       ) : (
         <p className="mt-3 text-ink-soft">

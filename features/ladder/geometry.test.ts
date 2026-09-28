@@ -10,6 +10,7 @@ import {
   layout,
   maxBoardWidth,
   minBoardWidth,
+  scrollToShow,
   traceTiming,
   type Geometry,
 } from "./geometry";
@@ -177,5 +178,26 @@ describe("traceTiming", () => {
       expect(traceTiming(0, lines).trace).toBeGreaterThanOrEqual(600);
       expect(traceTiming(900, lines).trace).toBeLessThanOrEqual(traceTiming(900, lines - 1).trace);
     }
+  });
+});
+
+describe("scrollToShow", () => {
+  // A 390px screen scrolled 100px into the board, with 40px kept around each end.
+  const view = { pad: 40, scrollLeft: 100, width: 390 };
+  const scroll = (from: number, to: number) => scrollToShow(from, to, view.pad, view.scrollLeft, view.width);
+
+  it("leaves the board alone when both ends are already in view", () => {
+    expect(scroll(150, 440)).toBeNull();
+    expect(scroll(300, 300)).toBeNull();
+  });
+
+  it("centres both ends when they fit on screen together", () => {
+    expect(scroll(500, 300)).toBe(400 - 195);
+    expect(scroll(20, 20)).toBe(20 - 195);
+  });
+
+  it("centres the leading end when both don't fit", () => {
+    expect(scroll(700, 150)).toBe(700 - 195);
+    expect(scroll(150, 700)).toBe(150 - 195);
   });
 });

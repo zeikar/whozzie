@@ -4,11 +4,12 @@
  */
 
 import { hashString, seededRandom } from "@/lib/random";
+import { round } from "@/lib/sketch";
 import type { Ladder, Lane } from "./ladder";
 
 /** Lines closer than this get cramped, so the board scrolls sideways instead. Six still fit a 390px phone. */
-export const MIN_GAP = 51;
-export const MAX_GAP = 120;
+const MIN_GAP = 51;
+const MAX_GAP = 120;
 /** Below this spacing a name can't sit over its own line; names alternate between two rows. */
 const STAGGER_BELOW = 96;
 /** Alternating labels reach past their own line; the outer ones get this many gaps of room. */
@@ -60,8 +61,6 @@ export function layout(width: number, ladder: Ladder) {
   };
 }
 
-const round2 = (value: number) => Math.round(value * 100) / 100;
-
 /** A lane's path in px, from under the player's name to the top of their result. */
 export function lanePath(lane: Lane, geometry: Geometry) {
   const last = lane.points.length - 1;
@@ -73,9 +72,21 @@ export function lanePath(lane: Lane, geometry: Geometry) {
     const across = lane.points[i % 2 === 1 ? i + 1 : i - 1][0];
     return [x, geometry.rungY(y - 0.5, Math.min(column, across))];
   });
-  const d = points.map(([x, y], i) => `${i === 0 ? "M" : "L"}${round2(x)} ${round2(y)}`).join("");
+  const d = points.map(([x, y], i) => `${i === 0 ? "M" : "L"}${round(x)} ${round(y)}`).join("");
   const length = points.slice(1).reduce((sum, [x, y], i) => sum + Math.hypot(x - points[i][0], y - points[i][1]), 0);
   return { d, length };
+}
+
+/**
+ * Where to scroll a board wider than the screen (`view` px wide, scrolled to
+ * `scrollLeft`) so both ends of a line, at `from` and `to` px, show with `pad` px
+ * around them; null when they already do. When both can't fit, `from` leads.
+ */
+export function scrollToShow(from: number, to: number, pad: number, scrollLeft: number, view: number) {
+  const [left, right] = from < to ? [from, to] : [to, from];
+  if (left - pad >= scrollLeft && right + pad <= scrollLeft + view) return null;
+  const centre = right - left + 2 * pad <= view ? (left + right) / 2 : from;
+  return centre - view / 2;
 }
 
 /** A single trace speeds up on short paths and slows on long ones, within TRACE_MS. */
@@ -85,7 +96,7 @@ export const PEEL_MS = 420;
 /** Reveal all speeds its traces up to finish in about this long... */
 export const REVEAL_ALL_MS = 10_000;
 /** ...but never runs them faster than this share of their usual time, or they'd be hard to follow. */
-export const MIN_PACE = 0.4;
+const MIN_PACE = 0.4;
 
 /**
  * How long tracing a path `length` px long takes, and peeling the tape off after,

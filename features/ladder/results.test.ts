@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { INITIAL_RESULTS, choose, edit } from "./results";
+import { MAX_PLAYERS } from "./ladder";
+import { INITIAL_RESULTS, MAX_RESULT_LENGTH, choose, edit, parseResults } from "./results";
 
 const WINNER = ["Winner", "Nope", "Nope"];
 const ORDER = ["1st", "2nd", "3rd"];
@@ -28,5 +29,27 @@ describe("choose", () => {
     const order = choose(written, "order", ["Winner", "Nope", "Dishes"]);
     expect(order).toEqual({ preset: "order", custom: written.custom });
     expect(choose(order, "custom", ORDER)).toEqual(written);
+  });
+});
+
+describe("parseResults", () => {
+  it("accepts saved results", () => {
+    expect(parseResults(INITIAL_RESULTS)).toEqual(INITIAL_RESULTS);
+    const saved = { preset: "order", custom: ["Coffee", "", "Dishes"] };
+    expect(parseResults(saved)).toEqual(saved);
+  });
+
+  it("rejects anything that isn't a preset and a list of result texts", () => {
+    expect(parseResults(null)).toBeUndefined();
+    expect(parseResults("winner")).toBeUndefined();
+    expect(parseResults({ preset: "lottery", custom: [] })).toBeUndefined();
+    expect(parseResults({ preset: "custom" })).toBeUndefined();
+    expect(parseResults({ preset: "custom", custom: "Coffee" })).toBeUndefined();
+    expect(parseResults({ preset: "custom", custom: ["Coffee", 2] })).toBeUndefined();
+  });
+
+  it("rejects more results, or longer ones, than the card lets you write", () => {
+    expect(parseResults({ preset: "custom", custom: Array(MAX_PLAYERS + 1).fill("") })).toBeUndefined();
+    expect(parseResults({ preset: "custom", custom: ["x".repeat(MAX_RESULT_LENGTH + 1)] })).toBeUndefined();
   });
 });

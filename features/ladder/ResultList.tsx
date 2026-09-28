@@ -23,6 +23,8 @@ export function ResultList({
         // names and results wrap, and a long name pushes its result onto the next line.
         <li key={lane.player} className="flex flex-wrap items-start gap-x-2 gap-y-1">
           <NameChip name={names[lane.player]} index={lane.player} count={names.length} wrap />
+          {/* The arrow is drawn, so screen readers get a separator instead. */}
+          <span className="sr-only">: </span>
           <span className="flex min-w-0 grow basis-36 items-start gap-2">
             <svg viewBox="0 0 30 16" className="mt-3 h-4 w-8 shrink-0 text-ink-soft" aria-hidden>
               <path

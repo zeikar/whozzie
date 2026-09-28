@@ -1,11 +1,14 @@
-import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { INITIAL_RESULTS, choose, edit, type Preset } from "./results";
+import { usePersistedState } from "@/lib/use-persisted-state";
+import { INITIAL_RESULTS, choose, edit, parseResults, type Preset } from "./results";
 
-/** The results for `count` players: what each slot says, and how the ladder labels it. */
+/**
+ * The results for `count` players: what each slot says, and how the ladder labels
+ * it. Remembered across visits, like the names, so a weekly rota isn't retyped.
+ */
 export function useResults(count: number) {
   const t = useTranslations("ladder.results");
-  const [results, setResults] = useState(INITIAL_RESULTS);
+  const [results, setResults] = usePersistedState("whozzie:ladder:results", INITIAL_RESULTS, parseResults);
   const { preset, custom } = results;
 
   const values = Array.from({ length: count }, (_, i) => {

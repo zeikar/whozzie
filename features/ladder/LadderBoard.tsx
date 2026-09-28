@@ -4,10 +4,12 @@ import { memo, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useS
 import { useTranslations } from "next-intl";
 import { NameChip } from "@/components/picker/NameChip";
 import { RedPenCircle } from "@/components/ui/RedPenCircle";
+import { ignoreAbort } from "@/lib/animation";
 import { cx } from "@/lib/cx";
 import { markerVar } from "@/lib/markers";
 import { hashString, seededRandom } from "@/lib/random";
 import { sketchLine } from "@/lib/sketch";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import {
   FLAP_HEIGHT,
   TAPE_OVERHANG,
@@ -15,12 +17,16 @@ import {
   layout,
   maxBoardWidth,
   minBoardWidth,
+  scrollToShow,
   traceTiming,
   type Geometry,
 } from "./geometry";
 import type { Ladder, Round } from "./ladder";
 
 const HIGHLIGHTER = 12;
+/** Once the winner is known and every line is out, their path stands out and the rest fall back. */
+const WINNER_PATH = { width: 14, opacity: 0.95 };
+const OTHER_PATH = { width: 8, opacity: 0.3 };
 const TRACE_EASING = "cubic-bezier(0.45, 0, 0.55, 1)";
 
 const PEEL: Keyframe[] = [
@@ -57,11 +63,6 @@ const LadderInk = memo(function LadderInk({ ladder, geometry }: { ladder: Ladder
   );
 });
 
-const ignoreAbort = (error: unknown) => {
-  // AbortError means we cancelled it: a new round, or the page unmounted.
-  if (!(error instanceof DOMException && error.name === "AbortError")) throw error;
-};
-
 /**
  * The stage: names on top, the ladder, and the results taped over along the
  * bottom. Tracing is animated here; the picker learns when a line has landed.
@@ -96,7 +97,9 @@ export function LadderBoard({
   const t = useTranslations("ladder");
   const { ladder, lanes } = round;
   const count = names.length;
+  const reducedMotion = useReducedMotion();
 
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const traceRef = useRef<SVGPathElement>(null);
   const tapeRef = useRef<HTMLDivElement>(null);
@@ -118,11 +121,43 @@ export function LadderBoard({
   const land = useEffectEvent((column: number) => onLanded(column));
   const timing = useEffectEvent((column: number) => traceTiming(paths?.[column].length ?? 0, runLength));
 
+  // Keep a traced line in view. When the results along the bottom are off the screen,
+  // or under a phone's stuck action row (the scroll margin keeps clear of it), the
+  // page scrolls the board into view; one taller than the screen shows its top while
+  // a line is traced and its bottom once it lands. The scroller is no wider than the
+  // screen, so only the page moves. A board too wide for the screen scrolls sideways:
+  // keep a line's two ends in view if they fit together, otherwise its start while
+  // it's traced and then where it lands.
+  const showLine = useEffectEvent((column: number, landed: boolean) => {
+    const scroller = scrollerRef.current;
+    const box = boxRef.current;
+    if (!scroller || !box || !geometry) return;
+    const behavior = reducedMotion ? "auto" : "smooth";
+    const view = window.innerHeight - (parseFloat(getComputedStyle(scroller).scrollMarginBottom) || 0);
+    if (scroller.getBoundingClientRect().bottom > view) {
+      scroller.scrollIntoView({ block: landed && scroller.offsetHeight > view ? "end" : "nearest", behavior });
+    }
+    if (scroller.scrollWidth <= scroller.clientWidth) return;
+    const origin = box.getBoundingClientRect().left - scroller.getBoundingClientRect().left + scroller.scrollLeft;
+    const start = origin + geometry.x(column);
+    const end = origin + geometry.x(lanes[column].end);
+    const [lead, other] = landed ? [end, start] : [start, end];
+    const left = scrollToShow(lead, other, geometry.labelWidth / 2, scroller.scrollLeft, scroller.clientWidth);
+    if (left !== null) scroller.scrollTo({ left, behavior });
+  });
+
+  // Without motion a pick uncovers its result at once, wherever it is.
+  const latest = revealed.at(-1);
+  useEffect(() => {
+    if (latest !== undefined && runLength === 1) showLine(latest, true);
+  }, [latest, runLength]);
+
   // Draw the highlighter down the path, then peel the tape off the result it lands on.
   useEffect(() => {
     const path = traceRef.current;
     if (tracing === null || !path) return;
     const ms = timing(tracing);
+    showLine(tracing, false);
     // Dashes are in pathLength units (the path is 1 long), so a resize mid-trace
     // redraws the path without throwing the dash off.
     const trace = path.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], {
@@ -133,6 +168,7 @@ export function LadderBoard({
     let peel: Animation | undefined;
     trace.finished
       .then(() => {
+        showLine(tracing, true);
         peel = tapeRef.current?.animate(PEEL, { duration: ms.peel, easing: "ease-in", fill: "forwards" });
         return peel?.finished;
       })
@@ -148,11 +184,15 @@ export function LadderBoard({
   const landing = tracing === null ? null : lanes[tracing].end;
   // The lanes in the order they arrive along the bottom (ends are one per column).
   const arrivals = lanes.map((lane, column) => ({ lane, column })).sort((a, b) => a.lane.end - b.lane.end);
+  const spotlight = revealed.length === lanes.length ? winner : null;
+  const columns = lanes.map((_, column) => column);
+  // The winner's path goes on last, over the others.
+  const drawOrder = spotlight === null ? columns : [...columns.filter((column) => column !== spotlight), spotlight];
 
   return (
     // Scrolls sideways inside the stage when the lines can't fit; the padding keeps
     // the red-pen circle and lifted chips from being clipped by the scroll box.
-    <div className="-mx-4 overflow-x-auto px-4 pt-3 pb-2 sm:-mx-2 sm:px-2">
+    <div ref={scrollerRef} className="-mx-4 overflow-x-auto px-4 pt-3 pb-2 sm:-mx-2 sm:px-2">
       <div
         ref={boxRef}
         role="group"
@@ -169,17 +209,20 @@ export function LadderBoard({
                 fill="none"
                 strokeWidth={HIGHLIGHTER}
                 strokeLinejoin="round"
-                opacity={0.85}
+                opacity={spotlight === null ? 0.85 : undefined}
               >
-                {lanes.map((lane, column) => {
+                {drawOrder.map((column) => {
                   const active = column === tracing;
                   if (!active && !revealed.includes(column)) return null;
+                  const look = spotlight === null ? null : column === spotlight ? WINNER_PATH : OTHER_PATH;
                   return (
                     <path
                       key={column}
                       ref={active ? traceRef : undefined}
                       d={paths[column].d}
-                      stroke={markerVar(lane.player, count)}
+                      stroke={markerVar(lanes[column].player, count)}
+                      strokeWidth={look?.width}
+                      opacity={look?.opacity}
                       pathLength={active ? 1 : undefined}
                       strokeDasharray={active ? 1 : undefined}
                       strokeDashoffset={active ? 1 : undefined}
@@ -203,6 +246,8 @@ export function LadderBoard({
                     <button
                       type="button"
                       onClick={() => onPick(column)}
+                      // The chip cuts long names short; the tooltip has the rest.
+                      title={name}
                       aria-disabled={busy || done}
                       aria-label={
                         done ? t("lane", { name, result: labels[lane.result] }) : t("follow", { name })
@@ -245,7 +290,10 @@ export function LadderBoard({
                       <p
                         aria-hidden={!uncovered}
                         title={label}
-                        className="sketch-sm grid h-full place-items-center border-2 border-ink px-1.5 font-hand text-lg font-bold text-on-marker"
+                        className={cx(
+                          "sketch-sm grid h-full place-items-center border-ink px-1.5 font-hand text-lg font-bold text-on-marker",
+                          column === spotlight ? "border-[2.5px]" : "border-2",
+                        )}
                         style={{ backgroundColor: markerVar(lane.player, count) }}
                       >
                         <span className="max-w-full truncate">{label}</span>
@@ -271,7 +319,7 @@ function Tape({ ref, seed, label }: { ref?: Ref<HTMLDivElement>; seed: number; l
   return (
     <div
       ref={ref}
-      className="absolute grid place-items-center font-hand text-2xl font-bold text-ink-soft"
+      className="absolute grid place-items-center font-hand text-2xl font-bold text-ink"
       style={{
         inset: `${-TAPE_OVERHANG.y}px ${-TAPE_OVERHANG.x}px`,
         backgroundColor: TAPE_COLOR,

@@ -4,10 +4,11 @@ import { useId, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { NamesCard } from "@/components/picker/NamesCard";
 import { PickerLayout } from "@/components/picker/PickerLayout";
-import { ResultDialog, Verdict } from "@/components/picker/ResultDialog";
+import { ResultDialog, Verdict, VerdictActions } from "@/components/picker/ResultDialog";
+import { StickyActions } from "@/components/picker/StickyActions";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
-import { removeName, useNames } from "@/lib/names";
+import { useNames } from "@/lib/names";
 import { pickerHref } from "@/lib/site";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { covered, follow, followAll, isComplete, land, newGame, tracing, uncover, type Game } from "./game";
@@ -19,9 +20,11 @@ import { useResults } from "./use-results";
 
 type DialogKind = "winner" | "everyone";
 
+// Side by side even on a phone, where the row sticks to the bottom and two rows would hide the board.
+const ACTION_WIDTH = "min-w-0 flex-1 max-sm:px-4 sm:min-w-52 sm:flex-none";
+
 export function LadderPicker() {
   const t = useTranslations("ladder");
-  const tResult = useTranslations("result");
   const names = useNames();
   const reducedMotion = useReducedMotion();
   const results = useResults(names.length);
@@ -84,17 +87,15 @@ export function LadderPicker() {
     else setGame(followAll(game));
   }
 
-  // Once a path is known, changing results could steer it, so they get a new ladder.
-  // Before that every result is still taped over on a shuffled slot, so a new ladder
-  // would only redraw the board on every keystroke.
-  function changeResults(apply: () => void) {
-    apply();
-    if (game.revealed.length > 0) deal();
-  }
-
   // Announces each result as it lands; during "Reveal all" the next trace follows right after.
+  // After a run of several, the last to land is just the rightmost (with reduced motion they
+  // all land at once), so it sums up instead: who won, or that everything is out.
+  const landedOn = (column: number) => t("landed", { name: nameAt(column), result: resultAt(column) });
   const last = game.revealed.at(-1);
-  const landed = last === undefined ? null : t("landed", { name: nameAt(last), result: resultAt(last) });
+  let landed = last === undefined ? null : landedOn(last);
+  if (current === null && game.run.length > 1) {
+    landed = winnerColumn === null ? t("allRevealed") : landedOn(winnerColumn);
+  }
   const following = current === null ? null : t("following", { name: nameAt(current) });
   const status = [landed, following].filter(Boolean).join(" ") || t("hint");
 
@@ -107,9 +108,10 @@ export function LadderPicker() {
           count={names.length}
           preset={results.preset}
           values={results.values}
-          onPreset={(preset) => changeResults(() => results.choose(preset))}
-          onEdit={(index, value) => changeResults(() => results.edit(index, value))}
-          locked={busy}
+          onPreset={results.choose}
+          onEdit={results.edit}
+          // Once a line is traced, a changed result could steer the round; it waits for a new ladder.
+          locked={busy || game.revealed.length > 0}
         />
       }
     >
@@ -129,7 +131,7 @@ export function LadderPicker() {
             onPick={pick}
             onLanded={(column) => settle(land(game, column))}
           />
-          <div className="mt-3 flex flex-wrap justify-center gap-3">
+          <StickyActions className="lg:mt-3">
             <Button
               ref={revealRef}
               variant="primary"
@@ -137,20 +139,14 @@ export function LadderPicker() {
               onClick={revealAll}
               // aria-disabled, not disabled: keyboard focus stays put while lines are traced.
               aria-disabled={busy || complete}
-              className="min-w-52"
+              className={ACTION_WIDTH}
             >
               {t("revealAll")}
             </Button>
-            <Button
-              ref={newLadderRef}
-              size="lg"
-              onClick={deal}
-              aria-disabled={busy}
-              className="min-w-52"
-            >
+            <Button ref={newLadderRef} size="lg" onClick={deal} aria-disabled={busy} className={ACTION_WIDTH}>
               {t("newLadder")}
             </Button>
-          </div>
+          </StickyActions>
           {complete && (
             <section aria-labelledby={summaryId} className="mt-4 border-t-2 border-dashed border-ink/20 pt-5">
               <h2 id={summaryId} className="font-hand text-3xl font-bold">
@@ -185,34 +181,28 @@ export function LadderPicker() {
         onClose={() => setDialogOpen(false)}
         heading={dialogKind === "winner" ? t("picked") : t("everyone")}
         actions={
-          <>
-            <Button variant="primary" onClick={deal} className="flex-1">
-              {t("playAgain")}
-            </Button>
-            {dialogKind === "winner" && winner && (
-              <Button
-                onClick={() => {
-                  removeName(winner);
-                  setDialogOpen(false);
-                }}
-                className="flex-1"
-              >
-                {tResult("removeName", { name: winner })}
-              </Button>
-            )}
-          </>
+          <VerdictActions
+            again={t("playAgain")}
+            onAgain={deal}
+            // "Play again" also closes the everyone dialog, which has no single pick to remove.
+            remove={dialogKind === "winner" ? winner : null}
+            onRemoved={() => setDialogOpen(false)}
+          />
         }
       >
         {dialogKind === "winner"
           ? winner && <Verdict name={winner} />
           : round &&
             complete && (
-              <ResultList
-                names={names}
-                lanes={round.lanes}
-                labels={results.labels}
+              // Focusable so the keyboard can scroll it where the browser won't (Safari).
+              <div
+                role="region"
+                aria-label={t("everyone")}
+                tabIndex={0}
                 className="mt-5 max-h-[55dvh] overflow-y-auto p-1"
-              />
+              >
+                <ResultList names={names} lanes={round.lanes} labels={results.labels} />
+              </div>
             )}
       </ResultDialog>
     </PickerLayout>
