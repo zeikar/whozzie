@@ -14,7 +14,7 @@
       ]
     },
     "heading": "Who's it gonna be?",
-    "lede": "Write the names down once. Then spin, roll, or climb to find out.",
+    "lede": "Write the names down once. Then spin, roll, or follow the lines to find out.",
     "choose": "Pick a way to decide"
   },
   "site": {
@@ -30,12 +30,15 @@
     "inputLabel": "Add a name",
     "placeholder": "Type a name, press Enter",
     "add": "Add",
-    "hint": "Paste a list to add everyone at once.",
-    "duplicate": "{name} is already on the list.",
+    "hint": "Paste a list: one name per line, or separated by commas.",
+    "added": "{count, plural, one {Added {name}.} other {Added # names.}}",
+    "duplicate": "{count, plural, one {{names} is already on the list.} other {{names} are already on the list.}}",
     "full": "The list holds up to {max} names.",
     "remove": "Remove {name}",
+    "removed": "Removed {name}.",
+    "undo": "Undo",
     "clear": "Clear all",
-    "confirmClear": "Tap again to clear",
+    "confirmClear": "Press again to clear",
     "empty": "No names yet. Add a few above to start."
   },
   "result": {

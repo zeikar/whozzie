@@ -3,7 +3,7 @@
 import { useId } from "react";
 import { cx } from "@/lib/cx";
 
-export type SegmentOption<T extends string> = { value: T; label: string };
+type SegmentOption<T extends string> = { value: T; label: string };
 
 /**
  * A row of mutually exclusive options (native radios underneath, so arrow keys

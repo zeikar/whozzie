@@ -6,7 +6,8 @@
 type Rand = () => number;
 
 const jitter = (rand: Rand, amount: number) => (rand() - 0.5) * 2 * amount;
-const round = (value: number) => Math.round(value * 100) / 100;
+/** Two decimals is plenty for a path in px, and keeps the `d` strings short. */
+export const round = (value: number) => Math.round(value * 100) / 100;
 
 /** A line from (x1, y1) to (x2, y2) with a slight bow and wobbly ends. */
 export function sketchLine(

@@ -12,7 +12,7 @@ export function SiteHeader() {
       <Link href="/" aria-label={t("home")} className="font-hand text-4xl leading-none font-bold">
         {SITE_NAME}
       </Link>
-      <PickerNav className="order-last -mx-1.5 w-full overflow-x-auto sm:order-none sm:w-auto" />
+      <PickerNav className="order-last -mx-1.5 w-full overflow-x-auto sm:order-none sm:w-auto sm:overflow-visible" />
       <div className="ml-auto flex items-center gap-1">
         <LocaleSwitch />
         <ThemeToggle />

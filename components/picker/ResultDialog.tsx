@@ -3,7 +3,9 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { CloseIcon } from "@/components/icons";
+import { Button } from "@/components/ui/Button";
 import { RedPenCircle } from "@/components/ui/RedPenCircle";
+import { removeName } from "@/lib/names";
 
 /**
  * A slip of paper that slides over the page with the verdict. Built on <dialog>
@@ -27,6 +29,7 @@ export function ResultDialog({
   const t = useTranslations("result");
   const ref = useRef<HTMLDialogElement>(null);
   const headingId = useId();
+  const bodyId = useId();
 
   useEffect(() => {
     const dialog = ref.current;
@@ -39,7 +42,19 @@ export function ResultDialog({
     <dialog
       ref={ref}
       aria-labelledby={headingId}
-      onClose={onClose}
+      // Read the verdict with the dialog's name; focus lands on Close, not on it.
+      aria-describedby={bodyId}
+      onClose={(event) => {
+        // The close event is queued; when the next result reopens the dialog at
+        // once (reduced motion, no 3D), the old one lands after the reopen.
+        if (event.currentTarget.open) return;
+        // Focus goes back to whatever opened the dialog, unless that's gone
+        // (e.g. the name was removed and took the ladder with it).
+        if (document.activeElement === document.body) {
+          document.querySelector<HTMLElement>("[data-names-input]")?.focus();
+        }
+        onClose();
+      }}
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -65,7 +80,7 @@ export function ResultDialog({
         <h2 id={headingId} className="pr-10 font-hand text-2xl font-bold text-ink-soft">
           {heading}
         </h2>
-        {children}
+        <div id={bodyId}>{children}</div>
         {actions && <div className="mt-6 flex flex-wrap gap-3">{actions}</div>}
       </div>
     </dialog>
@@ -80,5 +95,43 @@ export function Verdict({ name }: { name: string }) {
         {name}
       </RedPenCircle>
     </p>
+  );
+}
+
+/**
+ * The result dialog's buttons: go again, and take the picked name off the list
+ * (NamesCard then offers to undo that). Pass `remove={null}` when there's no
+ * single pick, e.g. a list of everyone's results.
+ */
+export function VerdictActions({
+  again,
+  onAgain,
+  remove,
+  onRemoved,
+}: {
+  again: string;
+  onAgain: () => void;
+  remove: string | null;
+  /** Called after the name is removed; usually closes the dialog. */
+  onRemoved: () => void;
+}) {
+  const t = useTranslations("result");
+  return (
+    <>
+      <Button variant="primary" onClick={onAgain} className="flex-1">
+        {again}
+      </Button>
+      {remove !== null && (
+        <Button
+          onClick={() => {
+            removeName(remove);
+            onRemoved();
+          }}
+          className="flex-1"
+        >
+          {t("removeName", { name: remove })}
+        </Button>
+      )}
+    </>
   );
 }

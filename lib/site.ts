@@ -4,8 +4,7 @@ export const SITE_NAME = "Whozzie";
 
 /**
  * Every picker, in navigation order. A picker's id is its route segment and its
- * message namespace, so adding one means: a folder under features/, a route under
- * app/[locale]/, a namespace in messages/*.json, and an entry here.
+ * message namespace; README.md's "Adding a picker" lists everything a new one needs.
  */
 export const PICKER_IDS = ["wheel", "dice", "ladder"] as const;
 

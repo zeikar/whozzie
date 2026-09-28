@@ -22,13 +22,14 @@ export function PickerNav({ className }: { className?: string }) {
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className="group flex h-11 items-center gap-1.5 px-1.5 whitespace-nowrap"
+                // Phones scroll the nav sideways, which would clip a focus ring drawn outside the link.
+                className="group flex h-11 items-center gap-1.5 px-1.5 whitespace-nowrap max-sm:focus-visible:outline-offset-[-3px]"
               >
                 <Doodle className="chalk size-6 shrink-0 sm:size-7 transition-transform group-hover:-rotate-8" />
                 <span
                   className={cx(
                     "font-hand text-xl font-bold sm:text-2xl",
-                    active ? "highlighter text-ink" : "text-ink-soft group-hover:text-ink",
+                    active ? "highlighter current-mark text-ink" : "text-ink-soft group-hover:text-ink",
                   )}
                 >
                   {t(`${id}.name`)}

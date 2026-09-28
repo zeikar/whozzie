@@ -23,10 +23,13 @@ support 10.
 ```
 app/[locale]/          routes; each page is a thin shell around a feature component
 features/<picker>/     one folder per picker: components, pure logic, tests
-components/picker/     what every picker shares: PickerLayout, NamesCard, NameChip, ResultDialog + Verdict
-components/ui/         Button, SegmentedControl, RedPenCircle
+components/picker/     what every picker shares: PickerLayout, NamesCard, NameChip, StickyActions,
+                       ResultDialog + Verdict + VerdictActions
+components/ui/         Button, Card, TextInput, SegmentedControl, RedPenCircle
 components/site/       header, nav, language + theme switches, footer
-lib/                   names store, crypto randomness, marker colors, hand-drawn path helpers, metadata
+components/icons.tsx   stroke icons, and each picker's doodle (PICKER_DOODLES)
+lib/                   names store, crypto randomness, marker colors, hand-drawn path helpers, metadata,
+                       and hooks for reduced motion, theme colors and remembered settings
 messages/{en,ko}.json  copy; one namespace per picker
 ```
 
@@ -48,6 +51,6 @@ circle drawn around whoever gets picked.
 1. Add its id to `PICKER_IDS` in `lib/site.ts` (nav, home page and sitemap pick it up) and a doodle to
    `PICKER_DOODLES` in `components/icons.tsx`.
 2. Add a namespace with `name`, `summary`, `meta`, `heading`, `lede` to both `messages/en.json` and `messages/ko.json`.
-3. Build it in `features/<id>/` on top of `PickerLayout`, `NamesCard` and `ResultDialog`, with its logic in plain
-   modules and tests beside them.
+3. Build it in `features/<id>/` on top of `PickerLayout`, `NamesCard`, `StickyActions` (its main buttons) and
+   `ResultDialog` + `VerdictActions`, with its logic in plain modules and tests beside them.
 4. Add `app/[locale]/<id>/page.tsx`, copying `app/[locale]/wheel/page.tsx`.

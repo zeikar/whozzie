@@ -12,15 +12,23 @@ import { routing } from "@/i18n/routing";
 import { SITE_URL } from "@/lib/site";
 
 // Handwriting for anything written on the page (headings, names, buttons);
-// a rounded sans for reading and typing.
-const hand = Gaegu({ weight: ["400", "700"], subsets: ["latin"], variable: "--font-gaegu" });
+// a rounded sans for reading and typing. Gaegu takes one call per weight: asked
+// for both at once, next/font preloads all ~90 Korean slices of the bold face.
+// Both calls declare the same family, so --font-gaegu covers either weight.
+const hand = Gaegu({ weight: "400", subsets: ["latin"], variable: "--font-gaegu" });
+const handBold = Gaegu({ weight: "700", subsets: ["latin"], variable: "--font-gaegu" });
 const sans = Gowun_Dodum({ weight: "400", subsets: ["latin"], variable: "--font-gowun" });
 
+// The one place metadataBase is set: every page's URLs resolve against it.
 export const metadata: Metadata = { metadataBase: new URL(SITE_URL) };
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
+
+// Anything else (e.g. /missing.png, which the proxy skips) matches no route, so
+// app/global-not-found.tsx serves it, rendered on the server and not cached as a page.
+export const dynamicParams = false;
 
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
@@ -28,7 +36,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} className={`${hand.variable} ${sans.variable}`} suppressHydrationWarning>
+    <html lang={locale} className={`${hand.variable} ${handBold.variable} ${sans.variable}`} suppressHydrationWarning>
       <body>
         <SketchDefs />
         <NextIntlClientProvider>

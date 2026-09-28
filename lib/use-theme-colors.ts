@@ -2,12 +2,9 @@ import { useSyncExternalStore } from "react";
 import { MARKER_COUNT } from "./markers";
 
 export type ThemeColors = {
-  paper: string;
   card: string;
   ink: string;
-  inkSoft: string;
   onMarker: string;
-  verdict: string;
   /** --marker-0…7; index with markerIndex(). */
   markers: string[];
 };
@@ -18,12 +15,9 @@ function read(): ThemeColors {
   const style = getComputedStyle(document.documentElement);
   const value = (name: string) => style.getPropertyValue(name).trim();
   return {
-    paper: value("--paper"),
     card: value("--card"),
     ink: value("--ink"),
-    inkSoft: value("--ink-soft"),
     onMarker: value("--on-marker"),
-    verdict: value("--verdict"),
     markers: Array.from({ length: MARKER_COUNT }, (_, i) => value(`--marker-${i}`)),
   };
 }

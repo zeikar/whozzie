@@ -28,7 +28,7 @@ export function LocaleSwitch() {
           aria-current={locale === current ? "true" : undefined}
           className={cx(
             "grid h-10 min-w-10 place-items-center px-1.5 font-hand text-xl font-bold",
-            locale === current ? "highlighter text-ink" : "text-ink-soft hover:text-ink",
+            locale === current ? "highlighter current-mark text-ink" : "text-ink-soft hover:text-ink",
           )}
         >
           {LABELS[locale].short}

@@ -88,13 +88,24 @@
   }
 
   .dark body {
-    /* Chalk dust: fine grain plus a few eraser smudges. */
+    /* Chalk dust: fine grain... */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+  }
+
+  /*
+   * ...plus a few eraser smudges that stay put as the page scrolls. A fixed layer
+   * rather than a fixed body background, which Chrome repaints on every scroll step.
+   */
+  .dark body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
     background-image:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
       radial-gradient(ellipse 60% 40% at 18% 12%, rgb(255 255 255 / 0.05), transparent 70%),
       radial-gradient(ellipse 50% 35% at 82% 68%, rgb(255 255 255 / 0.04), transparent 70%);
-    background-size: 180px 180px, 100% 100%, 100% 100%;
-    background-attachment: scroll, fixed, fixed;
   }
 
   ::selection {
@@ -106,6 +117,19 @@
   :lang(ko) {
     word-break: keep-all;
     overflow-wrap: break-word;
+  }
+
+  /* Gaegu's space is wide (0.42em against Gowun Dodum's 0.31em), so handwritten words drift apart. */
+  .font-hand {
+    word-spacing: -0.08em;
+  }
+
+  .font-hand:lang(ko) {
+    word-spacing: -0.15em;
+  }
+
+  .font-sans {
+    word-spacing: normal;
   }
 
   :focus-visible {
@@ -151,6 +175,20 @@
   }
 }
 
+/*
+ * The current page or language: the highlighter plus a thin ink underline, as
+ * the yellow alone is too faint on paper to tell it apart. On the chalkboard
+ * the highlighter is already a chalk underline.
+ */
+@utility current-mark {
+  text-decoration: underline 2px var(--ink);
+  text-underline-offset: 0.18em;
+
+  &:where(.dark, .dark *) {
+    text-decoration: none;
+  }
+}
+
 /* The red-pen circle: drawn once when a verdict appears (see RedPenCircle). */
 @keyframes redpen-draw {
   to {
@@ -168,6 +206,43 @@
   .redpen-path {
     animation: none;
     stroke-dashoffset: 0;
+  }
+
+  /* Hover tilts and press nudges still happen, just without the motion. */
+  *,
+  ::before,
+  ::after {
+    transition-duration: 0s !important;
+  }
+}
+
+/*
+ * <StickyActions>: where the browser can tell the row is stuck to the bottom of
+ * the screen, give it a strip of paper so the stage doesn't show between buttons.
+ */
+.sticky-actions {
+  container-type: scroll-state;
+}
+
+@container scroll-state(stuck: bottom) {
+  .sticky-actions > * {
+    background-color: var(--paper);
+    /* A ruled edge; drawn inside the box so getting stuck doesn't move anything. */
+    box-shadow: inset 0 2px color-mix(in srgb, var(--ink) 15%, transparent);
+  }
+}
+
+/*
+ * While the row can stick, only what comes before it in the stage can end up under
+ * it. Keep that above the row when the page scrolls to it (a focused control, the
+ * stage brought into view): the row's height (its padding around a size-lg button,
+ * safe area included) plus room for focus rings. Not scroll-padding on the page,
+ * which would count the stuck row itself as hidden and scroll away from it.
+ */
+@media (width < 64rem) {
+  :has(~ .sticky-actions),
+  :has(~ .sticky-actions) * {
+    scroll-margin-bottom: calc(4.75rem + max(0.75rem, env(safe-area-inset-bottom)));
   }
 }
 
