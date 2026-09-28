@@ -17,12 +17,12 @@ export function ResultList({
 }) {
   const rows = [...lanes].sort((a, b) => a.result - b.result);
   return (
-    <ol className={cx("grid gap-x-8 gap-y-3", className)}>
+    <ol className={cx("grid grid-cols-[minmax(0,1fr)] gap-x-8 gap-y-3", className)}>
       {rows.map((lane) => (
-        // This is the one place to read every result in full, so nothing is cut: a long
-        // name takes the whole row and its result moves under it, and a long result wraps.
+        // This is the one place to read every result in full, so nothing is cut: long
+        // names and results wrap, and a long name pushes its result onto the next line.
         <li key={lane.player} className="flex flex-wrap items-start gap-x-2 gap-y-1">
-          <NameChip name={names[lane.player]} index={lane.player} count={names.length} />
+          <NameChip name={names[lane.player]} index={lane.player} count={names.length} wrap />
           <span className="flex min-w-0 grow basis-36 items-start gap-2">
             <svg viewBox="0 0 30 16" className="mt-3 h-4 w-8 shrink-0 text-ink-soft" aria-hidden>
               <path

@@ -44,12 +44,12 @@ export function ResultDialog({
         if (event.target === event.currentTarget) onClose();
       }}
       className={
-        "m-auto w-[min(30rem,calc(100vw-2rem))] overflow-visible bg-transparent p-0 text-ink " +
-        "opacity-0 translate-y-3 -rotate-1 transition-all transition-discrete duration-250 ease-out " +
-        "open:opacity-100 open:translate-y-0 open:rotate-0 " +
-        "starting:open:opacity-0 starting:open:translate-y-3 starting:open:-rotate-1 " +
-        "backdrop:bg-ink/35 backdrop:transition-all backdrop:transition-discrete backdrop:duration-250 " +
-        "backdrop:opacity-0 open:backdrop:opacity-100 starting:open:backdrop:opacity-0 " +
+        "m-auto w-[min(30rem,calc(100vw-2rem))] overflow-visible bg-transparent p-0 text-ink backdrop:bg-ink/35 " +
+        // Slides in on open but closes at once, so the slip never shows a new round's
+        // contents (or none) while fading out.
+        "open:transition-[opacity,translate,rotate] open:duration-250 open:ease-out " +
+        "starting:open:translate-y-3 starting:open:-rotate-1 starting:open:opacity-0 " +
+        "open:backdrop:transition-opacity open:backdrop:duration-250 starting:open:backdrop:opacity-0 " +
         "motion-reduce:transition-none motion-reduce:backdrop:transition-none"
       }
     >

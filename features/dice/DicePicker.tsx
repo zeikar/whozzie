@@ -141,7 +141,8 @@ export function DicePicker() {
     }
   }
 
-  let tableLabel = t("tableLabel", { count: dice.length });
+  // The stage is one labelled image, so its label has to carry the no-3D message too.
+  let tableLabel = tableFailed ? t("noTable") : t("tableLabel", { count: dice.length });
   if (!rolling && mode === "everyone" && lastRound) {
     tableLabel = t("tableShowing", { values: lastRound.map((roll) => `${roll.name} ${roll.value}`).join(", ") });
   } else if (!rolling && mode === "justRoll" && values) {
@@ -151,20 +152,18 @@ export function DicePicker() {
   return (
     <PickerLayout
       picker="dice"
-      aside={
-        <>
-          <NamesCard highlight={winner} locked={rolling} />
-          <DiceSettings
-            mode={mode}
-            onModeChange={changeMode}
-            diceCount={diceCount}
-            onDiceCountChange={(count) => {
-              setDiceCount(count);
-              setValues(null);
-            }}
-            disabled={rolling}
-          />
-        </>
+      aside={<NamesCard highlight={winner} locked={rolling} />}
+      settings={
+        <DiceSettings
+          mode={mode}
+          onModeChange={changeMode}
+          diceCount={diceCount}
+          onDiceCountChange={(count) => {
+            setDiceCount(count);
+            setValues(null);
+          }}
+          disabled={rolling}
+        />
       }
     >
       <div className="flex flex-col items-center gap-6">
@@ -178,7 +177,7 @@ export function DicePicker() {
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center text-ink-faint">
               <DiceDoodle className="chalk size-20 opacity-50" />
               {tableFailed ? (
-                <p className="max-w-xs text-sm">{t("noTable")}</p>
+                <p className="max-w-xs text-ink-soft">{t("noTable")}</p>
               ) : (
                 !table && <p className="text-sm">{t("loading")}</p>
               )}
@@ -201,7 +200,6 @@ export function DicePicker() {
             // and the result dialog would have nothing to hand focus back to.
             aria-disabled={rolling}
             disabled={!api || (mode === "everyone" && !enoughNames)}
-            className="aria-disabled:cursor-not-allowed aria-disabled:opacity-45"
           >
             {rolling ? t("rolling") : t("roll")}
           </Button>

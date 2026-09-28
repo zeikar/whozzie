@@ -17,7 +17,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const t = await getTranslations();
 
   return (
-    <div className="grid gap-x-14 gap-y-10 lg:grid-cols-[minmax(19rem,23rem)_minmax(0,1fr)]">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-x-14 gap-y-10 lg:grid-cols-[minmax(19rem,23rem)_minmax(0,1fr)]">
       <header className="lg:col-span-2">
         <h1 className="font-hand text-6xl leading-[0.9] font-bold sm:text-8xl">{t("home.heading")}</h1>
         <p className="mt-4 max-w-prose text-lg text-ink-soft">{t("home.lede")}</p>

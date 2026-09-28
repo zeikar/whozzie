@@ -7,7 +7,6 @@ import { PickerLayout } from "@/components/picker/PickerLayout";
 import { ResultDialog, Verdict } from "@/components/picker/ResultDialog";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
-import { cx } from "@/lib/cx";
 import { removeName, useNames } from "@/lib/names";
 import { pickerHref } from "@/lib/site";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
@@ -19,12 +18,6 @@ import { ResultsCard } from "./ResultsCard";
 import { useResults } from "./use-results";
 
 type DialogKind = "winner" | "everyone";
-
-// While a line is traced the buttons are aria-disabled rather than disabled, so a
-// keyboard user's focus stays on the button they pressed instead of dropping to the page.
-const SOFT_DISABLED =
-  "aria-disabled:cursor-not-allowed aria-disabled:opacity-45 " +
-  "aria-disabled:hover:rotate-0 aria-disabled:active:translate-y-0";
 
 export function LadderPicker() {
   const t = useTranslations("ladder");
@@ -108,18 +101,16 @@ export function LadderPicker() {
   return (
     <PickerLayout
       picker="ladder"
-      aside={
-        <>
-          <NamesCard highlight={winner} locked={busy} />
-          <ResultsCard
-            count={names.length}
-            preset={results.preset}
-            values={results.values}
-            onPreset={(preset) => changeResults(() => results.choose(preset))}
-            onEdit={(index, value) => changeResults(() => results.edit(index, value))}
-            locked={busy}
-          />
-        </>
+      aside={<NamesCard highlight={winner} locked={busy} />}
+      settings={
+        <ResultsCard
+          count={names.length}
+          preset={results.preset}
+          values={results.values}
+          onPreset={(preset) => changeResults(() => results.choose(preset))}
+          onEdit={(index, value) => changeResults(() => results.edit(index, value))}
+          locked={busy}
+        />
       }
     >
       {round ? (
@@ -144,17 +135,18 @@ export function LadderPicker() {
               variant="primary"
               size="lg"
               onClick={revealAll}
+              // aria-disabled, not disabled: keyboard focus stays put while lines are traced.
               aria-disabled={busy || complete}
-              className={cx("min-w-52", SOFT_DISABLED)}
+              className="min-w-52"
             >
               {t("revealAll")}
             </Button>
             <Button
               ref={newLadderRef}
               size="lg"
-              onClick={() => !busy && deal()}
+              onClick={deal}
               aria-disabled={busy}
-              className={cx("min-w-52", SOFT_DISABLED)}
+              className="min-w-52"
             >
               {t("newLadder")}
             </Button>

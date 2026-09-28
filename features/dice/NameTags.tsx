@@ -1,8 +1,8 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
+import { NameChip } from "@/components/picker/NameChip";
 import { RedPenCircle } from "@/components/ui/RedPenCircle";
-import { markerVar } from "@/lib/markers";
 import type { DieValue } from "./faces";
 import { placeTags } from "./tags";
 
@@ -47,15 +47,13 @@ export function NameTags({ tags, winner }: { tags: readonly NameTag[]; winner: s
       {tags.map((tag) => (
         <div key={tag.name} title={tag.name} className="pointer-events-auto absolute top-0 left-0">
           <RedPenCircle active={tag.name === winner} seed={tag.name}>
-            <span
-              className="sketch-sm flex max-w-[8.5rem] items-baseline gap-1.5 border-[1.5px] border-ink/80 px-2 pt-0.5 font-hand leading-tight font-bold whitespace-nowrap text-on-marker"
-              style={{ backgroundColor: markerVar(tag.index, tag.count) }}
-            >
-              <span className="truncate text-base">{tag.name}</span>
+            <NameChip name={tag.name} index={tag.index} count={tag.count} size="sm" className="max-w-[8.5rem]">
               {tag.value && (
-                <span className="shrink-0 border-l-[1.5px] border-on-marker/35 pl-1.5 text-lg">{tag.value}</span>
+                <span className="shrink-0 border-l-[1.5px] border-on-marker/35 pl-1.5 font-hand text-lg leading-none font-bold">
+                  {tag.value}
+                </span>
               )}
-            </span>
+            </NameChip>
           </RedPenCircle>
         </div>
       ))}

@@ -124,7 +124,7 @@ export function WheelPicker() {
         </div>
 
         <div className="flex flex-col items-center gap-3">
-          <Button variant="primary" size="lg" onClick={spin} disabled={spinning || names.length === 0}>
+          <Button variant="primary" size="lg" onClick={spin} aria-disabled={spinning} disabled={names.length === 0}>
             {spinning ? t("spinning") : t("spin")}
           </Button>
           {names.length === 0 && <p className="text-ink-soft">{t("needNames")}</p>}

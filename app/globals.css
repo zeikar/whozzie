@@ -3,6 +3,9 @@
 /* Theme is a class on <html> (set by next-themes) so visitors can override the OS. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* A control that can be used right now: not disabled, and not aria-disabled mid-action. */
+@custom-variant pressable (&:enabled:not([aria-disabled="true"]));
+
 /*
  * Light = the back page of a school notebook: graph paper, ballpoint ink,
  * highlighters, and a teacher's red pen that is saved for the verdict.
@@ -14,7 +17,7 @@
   --card: #ffffff;
   --ink: #1c2a4d;
   --ink-soft: #52607e;
-  --ink-faint: #97a3ba;
+  --ink-faint: #636f8a;
   --rule: #ee8b8b;
   --verdict: #e0322b;
   --on-marker: #1c2a4d;
@@ -38,7 +41,7 @@
   --card: #294339;
   --ink: #eef2e8;
   --ink-soft: #b7c4b6;
-  --ink-faint: #7d9488;
+  --ink-faint: #9aaea1;
   --rule: #d99cb3;
   --verdict: #ff8b7c;
   --on-marker: #1b2f28;

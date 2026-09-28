@@ -136,7 +136,6 @@
       "order": "Order",
       "custom": "Custom",
       "slot": "Result {number}",
-      "edit": "Edit results",
       "hint": "They stay taped over until someone lands on them.",
       "waiting": "Each name gets one result. Add at least two names first.",
       "tooMany": "The ladder fits {max} people. Take a few names off to set results.",

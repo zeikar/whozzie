@@ -3,7 +3,9 @@
 import { useId, useState, type ClipboardEvent, type KeyboardEvent } from "react";
 import { useTranslations } from "next-intl";
 import { CloseIcon, PlusIcon } from "@/components/icons";
+import { Card } from "@/components/ui/Card";
 import { RedPenCircle } from "@/components/ui/RedPenCircle";
+import { TextInput } from "@/components/ui/TextInput";
 import { cx } from "@/lib/cx";
 import { MAX_NAME_LENGTH, MAX_NAMES, addNames, clearNames, removeName, useNames } from "@/lib/names";
 import { NameChip } from "./NameChip";
@@ -62,41 +64,39 @@ export function NamesCard({
   }
 
   return (
-    <section
-      aria-labelledby={`${inputId}-title`}
-      className={cx("sketch border-2 border-ink bg-card px-5 pt-4 pb-5", className)}
+    <Card
+      title={t("title")}
+      className={className}
+      extra={
+        <>
+          <span className="text-sm text-ink-soft">{t("count", { count: names.length })}</span>
+          {names.length > 0 && !locked && (
+            <button
+              type="button"
+              onClick={() => {
+                if (confirmingClear) {
+                  clearNames();
+                  setNotice(null);
+                }
+                setConfirmingClear(!confirmingClear);
+              }}
+              onBlur={() => setConfirmingClear(false)}
+              className={cx(
+                "ml-auto rounded px-1 text-sm underline-offset-4 hover:underline",
+                confirmingClear ? "font-bold text-ink" : "text-ink-soft",
+              )}
+            >
+              {confirmingClear ? t("confirmClear") : t("clear")}
+            </button>
+          )}
+        </>
+      }
     >
-      <header className="flex items-baseline gap-3 border-b-2 border-rule pb-2">
-        <h2 id={`${inputId}-title`} className="font-hand text-3xl font-bold">
-          {t("title")}
-        </h2>
-        <span className="text-sm text-ink-soft">{t("count", { count: names.length })}</span>
-        {names.length > 0 && !locked && (
-          <button
-            type="button"
-            onClick={() => {
-              if (confirmingClear) {
-                clearNames();
-                setNotice(null);
-              }
-              setConfirmingClear(!confirmingClear);
-            }}
-            onBlur={() => setConfirmingClear(false)}
-            className={cx(
-              "ml-auto rounded px-1 text-sm underline-offset-4 hover:underline",
-              confirmingClear ? "text-verdict" : "text-ink-soft",
-            )}
-          >
-            {confirmingClear ? t("confirmClear") : t("clear")}
-          </button>
-        )}
-      </header>
-
       <div className="mt-4 flex gap-2">
         <label htmlFor={inputId} className="sr-only">
           {t("inputLabel")}
         </label>
-        <input
+        <TextInput
           id={inputId}
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
@@ -106,12 +106,8 @@ export function NamesCard({
           maxLength={MAX_NAME_LENGTH}
           placeholder={t("placeholder")}
           aria-describedby={noticeId}
-          autoComplete="off"
           enterKeyHint="done"
-          className={
-            "sketch-sm h-11 min-w-0 flex-1 border-2 border-ink/70 bg-paper px-3 text-base " +
-            "placeholder:text-ink-faint focus:border-ink focus-visible:outline-offset-2 disabled:opacity-50"
-          }
+          className="flex-1"
         />
         <button
           type="button"
@@ -123,7 +119,7 @@ export function NamesCard({
           <span className="sr-only">{t("add")}</span>
         </button>
       </div>
-      <p id={noticeId} aria-live="polite" className={cx("mt-2 min-h-5 text-sm", notice ? "text-ink" : "text-ink-faint")}>
+      <p id={noticeId} aria-live="polite" className={cx("mt-2 min-h-5 text-sm", notice ? "text-ink" : "text-ink-soft")}>
         {notice ?? t("hint")}
       </p>
 
@@ -134,7 +130,7 @@ export function NamesCard({
           {names.map((name, index) => (
             <li key={name} className="max-w-full">
               <RedPenCircle active={name === highlight} seed={name} className="max-w-full">
-                <NameChip name={name} index={index} count={names.length}>
+                <NameChip name={name} index={index} count={names.length} className="pr-1">
                   {!locked && (
                     <button
                       type="button"
@@ -151,6 +147,6 @@ export function NamesCard({
           ))}
         </ul>
       )}
-    </section>
+    </Card>
   );
 }
