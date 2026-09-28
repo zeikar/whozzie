@@ -1,26 +1,174 @@
 @import "tailwindcss";
 
+/* Theme is a class on <html> (set by next-themes) so visitors can override the OS. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Light = the back page of a school notebook: graph paper, ballpoint ink,
+ * highlighters, and a teacher's red pen that is saved for the verdict.
+ * Dark = the classroom chalkboard: slate green, chalk, colored chalk.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #f5f8fa;
+  --grid: #d3e2ec;
+  --card: #ffffff;
+  --ink: #1c2a4d;
+  --ink-soft: #52607e;
+  --ink-faint: #97a3ba;
+  --rule: #ee8b8b;
+  --verdict: #e0322b;
+  --on-marker: #1c2a4d;
+
+  /* Highlighters and sign pens. Ink text on each clears 7:1. */
+  --marker-0: #ffd84a;
+  --marker-1: #ff95c2;
+  --marker-2: #7fda9d;
+  --marker-3: #82bfff;
+  --marker-4: #ffab61;
+  --marker-5: #bda5ff;
+  --marker-6: #62d8d1;
+  --marker-7: #c8e96c;
+
+  color-scheme: light;
+}
+
+.dark {
+  --paper: #213831;
+  --grid: transparent;
+  --card: #294339;
+  --ink: #eef2e8;
+  --ink-soft: #b7c4b6;
+  --ink-faint: #7d9488;
+  --rule: #d99cb3;
+  --verdict: #ff8b7c;
+  --on-marker: #1b2f28;
+
+  /* Colored chalk. */
+  --marker-0: #f2de83;
+  --marker-1: #f0adca;
+  --marker-2: #a8deb0;
+  --marker-3: #a6cdef;
+  --marker-4: #f3c092;
+  --marker-5: #cfbcf3;
+  --marker-6: #9adcd5;
+  --marker-7: #d6ea9d;
+
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-verdict: var(--verdict);
+  --color-on-marker: var(--on-marker);
+
+  --font-hand: var(--font-gaegu), cursive;
+  --font-sans: var(--font-gowun), system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    min-height: 100dvh;
+    background-color: var(--paper);
+    /* Graph paper: a 24px grid. */
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: -1px -1px;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .dark body {
+    /* Chalk dust: fine grain plus a few eraser smudges. */
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      radial-gradient(ellipse 60% 40% at 18% 12%, rgb(255 255 255 / 0.05), transparent 70%),
+      radial-gradient(ellipse 50% 35% at 82% 68%, rgb(255 255 255 / 0.04), transparent 70%);
+    background-size: 180px 180px, 100% 100%, 100% 100%;
+    background-attachment: scroll, fixed, fixed;
+  }
+
+  ::selection {
+    background: var(--marker-0);
+    color: var(--on-marker);
+  }
+
+  /* Korean wraps between words, not syllables. */
+  :lang(ko) {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  :focus-visible {
+    outline: 2px dashed var(--ink);
+    outline-offset: 3px;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Corners that aren't quite even, like a box drawn freehand. */
+@utility sketch {
+  border-radius: 18px 12px 20px 10px / 12px 19px 10px 16px;
+}
+
+@utility sketch-sm {
+  border-radius: 11px 7px 12px 6px / 7px 11px 6px 10px;
+}
+
+/*
+ * A highlighter stroke behind text: slanted ends, lower half of the line.
+ * On the chalkboard it becomes a thick chalk underline so chalk text stays legible.
+ */
+@utility highlighter {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.2em,
+    var(--marker-0) 0.3em,
+    var(--marker-0) calc(100% - 0.25em),
+    transparent calc(100% - 0.15em)
+  );
+  background-size: 100% 0.62em;
+  background-position: 0 88%;
+  background-repeat: no-repeat;
+  box-decoration-break: clone;
+
+  &:where(.dark, .dark *) {
+    background-size: 100% 0.16em;
+    background-position: 0 100%;
+  }
+}
+
+/* The red-pen circle: drawn once when a verdict appears (see RedPenCircle). */
+@keyframes redpen-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.redpen-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: redpen-draw 620ms 140ms cubic-bezier(0.55, 0.1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .redpen-path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Chalk grain on SVG drawings in the dark theme; see <SketchDefs>. */
+.dark .chalk {
+  filter: url(#chalk);
 }

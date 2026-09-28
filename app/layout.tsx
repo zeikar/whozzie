@@ -1,18 +1,8 @@
 import "./globals.css";
-import { ReactNode } from "react";
-import { Analytics } from "@vercel/analytics/react";
+import type { ReactNode } from "react";
 
-type Props = {
-  children: ReactNode;
-};
-
-// Since we have a `not-found.tsx` page on the root, a layout file
-// is required, even if it's just passing children through.
-export default function RootLayout({ children }: Props) {
-  return (
-    <>
-      {children}
-      <Analytics />
-    </>
-  );
+// <html> and <body> live in app/[locale]/layout.tsx so `lang` can follow the
+// locale; this root layout only exists because Next requires one.
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return children;
 }

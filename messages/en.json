@@ -1,36 +1,95 @@
 {
-  "title": "Whozzie - Who's it gonna be?",
-  "description": "Need to make a decision? Whozzie helps you choose randomly — from picking names to settling who goes first. Just spin and see!",
-  "keywords": [
-    "name picker",
-    "random picker",
-    "random name selector",
-    "roulette picker",
-    "spin the wheel",
-    "online wheel spinner",
-    "random decision tool"
-  ],
-  "wheel": {
-    "title": "Spin the Wheel and Pick a Name!",
-    "description": "Just enter the names, spin the wheel, and let Whozzie do the choosing — fun, fair, and totally random!",
-    "keywords": [
-      "random name wheel",
-      "spin the wheel",
-      "name picker wheel",
-      "roulette style selector",
-      "random decision spinner"
-    ],
-    "addItem": "Add Name",
-    "spin": "Spin the Wheel!",
-    "spinning": "Hold on... it's spinning!",
-    "reset": "Reset All",
-    "noItemAdded": "Oops! You need to add at least one name first",
-    "placeholder": "Enter a name...",
+  "home": {
+    "meta": {
+      "title": "Whozzie – Who's it gonna be?",
+      "description": "Pick someone at random, fairly. Write the names once, then spin a wheel, roll dice, or play the ladder game.",
+      "keywords": [
+        "random name picker",
+        "spin the wheel",
+        "random picker",
+        "dice roller",
+        "ladder game",
+        "random decision tool",
+        "who goes first"
+      ]
+    },
+    "heading": "Who's it gonna be?",
+    "lede": "Write the names down once. Then spin, roll, or climb to find out.",
+    "choose": "Pick a way to decide"
+  },
+  "site": {
+    "home": "Whozzie home",
+    "pickers": "Pickers",
     "language": "Language",
-    "result": "🎉 And the winner is...",
-    "confirm": "Okay!",
-    "removeFromRoulette": "Remove from Wheel",
-    "items": "Name List",
-    "remove": "Remove"
+    "toNotebook": "Switch to notebook (light)",
+    "toChalkboard": "Switch to chalkboard (dark)"
+  },
+  "names": {
+    "title": "Names",
+    "count": "{count, plural, =0 {none yet} one {# name} other {# names}}",
+    "inputLabel": "Add a name",
+    "placeholder": "Type a name, press Enter",
+    "add": "Add",
+    "hint": "Paste a list to add everyone at once.",
+    "duplicate": "{name} is already on the list.",
+    "full": "The list holds up to {max} names.",
+    "remove": "Remove {name}",
+    "clear": "Clear all",
+    "confirmClear": "Tap again to clear",
+    "empty": "No names yet. Add a few above to start."
+  },
+  "result": {
+    "close": "Close",
+    "removeName": "Remove {name}"
+  },
+  "notFound": {
+    "title": "This page isn't in the notebook",
+    "body": "The link may be old or mistyped.",
+    "back": "Back to Whozzie"
+  },
+  "wheel": {
+    "name": "Wheel",
+    "summary": "Spin it and land on one name.",
+    "meta": {
+      "title": "Spin the Wheel – Random Name Picker | Whozzie",
+      "description": "Enter names, spin the wheel, and let it stop on one. Fair, fast, and free for classrooms, teams, and parties.",
+      "keywords": [
+        "random name wheel",
+        "spin the wheel",
+        "name picker wheel",
+        "wheel of names",
+        "random decision spinner"
+      ]
+    },
+    "heading": "Spin the wheel",
+    "lede": "Add names, spin, and see where the pointer stops.",
+    "spin": "Spin",
+    "spinning": "Spinning…",
+    "spinAgain": "Spin again",
+    "needNames": "Add at least one name to spin.",
+    "winner": "The wheel picked",
+    "wheelLabel": "Wheel with {count, plural, one {# name} other {# names}}"
+  },
+  "dice": {
+    "name": "Dice",
+    "summary": "Everyone rolls. Highest number wins.",
+    "meta": {
+      "title": "Roll the Dice – 3D Dice Roller | Whozzie",
+      "description": "Roll real 3D dice for everyone on your list, or just roll a few. Physics decides who wins.",
+      "keywords": ["3d dice roller", "roll dice online", "virtual dice", "dice for names", "random dice"]
+    },
+    "heading": "Roll the dice",
+    "lede": "Everyone gets a die. Roll them all and see who comes out on top."
+  },
+  "ladder": {
+    "name": "Ladder",
+    "summary": "Follow the lines to match everyone with a result.",
+    "meta": {
+      "title": "Ladder Game – Random Matching | Whozzie",
+      "description": "Play the ladder game (Amidakuji) online. Enter names and results, then follow the lines to see who gets what.",
+      "keywords": ["ladder game", "amidakuji", "ghost leg", "random matching", "ladder lottery"]
+    },
+    "heading": "Ladder game",
+    "lede": "Put names on top and results at the bottom, then follow the lines down."
   }
 }

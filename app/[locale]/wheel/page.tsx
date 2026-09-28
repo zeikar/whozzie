@@ -1,23 +1,14 @@
-import { Metadata } from "next";
-import WheelPageClient from "./components/WheelPageClient";
-import Header from "../components/Header";
-import { generateCommonMetadata } from "../utils/metadata";
+import type { Metadata } from "next";
+import { setRequestLocale } from "next-intl/server";
+import { WheelPicker } from "@/features/wheel/WheelPicker";
+import { localeFrom } from "@/i18n/locale";
+import { buildMetadata } from "@/lib/metadata";
 
-// This generates metadata for SEO
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  return generateCommonMetadata(locale, "wheel");
+export async function generateMetadata({ params }: PageProps<"/[locale]/wheel">): Promise<Metadata> {
+  return buildMetadata(await localeFrom(params), "wheel", "/wheel");
 }
 
-export default function WheelPage() {
-  return (
-    <>
-      <Header namespace={"wheel"} />
-      <WheelPageClient />
-    </>
-  );
+export default async function WheelPage({ params }: PageProps<"/[locale]/wheel">) {
+  setRequestLocale(await localeFrom(params));
+  return <WheelPicker />;
 }

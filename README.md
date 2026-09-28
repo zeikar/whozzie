@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Whozzie
 
-## Getting Started
+Who's it gonna be? Write the names down once, then decide with a spinning wheel, 3D dice, or a ladder game (사다리타기).
+Live at [whozzie.vercel.app](https://whozzie.vercel.app), in English and Korean.
 
-First, run the development server:
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000 (Korean at /ko)
+npm test           # unit tests (Vitest)
+npm run typecheck  # route types + TypeScript 7
+npm run lint
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+TypeScript is installed side by side: `tsc` is TypeScript 7 (`@typescript/native`), while `typescript` is the TS 6 API
+package that typescript-eslint and `next build` still need. ESLint stays on 9 until `eslint-config-next`'s plugins
+support 10.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How it's put together
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/[locale]/          routes; each page is a thin shell around a feature component
+features/<picker>/     one folder per picker: components, pure logic, tests
+components/picker/     what every picker shares: PickerLayout, NamesCard, NameChip, ResultDialog + Verdict
+components/ui/         Button, SegmentedControl, RedPenCircle
+components/site/       header, nav, language + theme switches, footer
+lib/                   names store, crypto randomness, marker colors, hand-drawn path helpers, metadata
+messages/{en,ko}.json  copy; one namespace per picker
+```
 
-## Learn More
+- **One names list.** `lib/names.ts` keeps the list in `localStorage`, shared by every picker and synced across tabs.
+- **Fair picks.** `lib/random.ts` draws from `crypto.getRandomValues` with rejection sampling. Pickers decide the result
+  first and animate toward it (the wheel), or read it from physics seeded by crypto randomness (the dice); the ladder
+  seats players in a shuffled order so every result is equally likely.
+- **A person's color follows them.** `lib/markers.ts` maps a name's position to one of eight marker colors, used for
+  their chip, wheel slice, die and ladder line.
 
-To learn more about Next.js, take a look at the following resources:
+## Design
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The light theme is the back page of a school notebook (graph paper, ballpoint ink, highlighters, a red margin rule);
+the dark theme is a classroom chalkboard. Tokens live in `app/globals.css`. Red is reserved for the verdict: the red-pen
+circle drawn around whoever gets picked.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Adding a picker
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Add its id to `PICKER_IDS` in `lib/site.ts` (nav, home page and sitemap pick it up) and a doodle to
+   `PICKER_DOODLES` in `components/icons.tsx`.
+2. Add a namespace with `name`, `summary`, `meta`, `heading`, `lede` to both `messages/en.json` and `messages/ko.json`.
+3. Build it in `features/<id>/` on top of `PickerLayout`, `NamesCard` and `ResultDialog`, with its logic in plain
+   modules and tests beside them.
+4. Add `app/[locale]/<id>/page.tsx`, copying `app/[locale]/wheel/page.tsx`.
