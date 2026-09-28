@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fitLabel, labelWidth, sliceAtPointer, targetRotation } from "./geometry";
+import { fitLabel, labelWidth, sliceAtPointer, targetRotation, upsideDown } from "./geometry";
 
 describe("sliceAtPointer", () => {
   it("reads slice 0 at rest", () => {
@@ -35,6 +35,29 @@ describe("targetRotation", () => {
     expect(sliceAtPointer(to, 5)).toBe(2);
     expect(to).toBeGreaterThanOrEqual(0);
     expect(to).toBeLessThan(360);
+  });
+});
+
+describe("upsideDown", () => {
+  it("flips labels that point into the left half", () => {
+    expect(upsideDown(270)).toBe(true);
+    expect(upsideDown(181)).toBe(true);
+    expect(upsideDown(359)).toBe(true);
+    expect(upsideDown(90)).toBe(false);
+    expect(upsideDown(1)).toBe(false);
+    expect(upsideDown(179)).toBe(false);
+  });
+
+  it("leaves straight up and straight down as they are", () => {
+    expect(upsideDown(0)).toBe(false);
+    expect(upsideDown(180)).toBe(false);
+    expect(upsideDown(360)).toBe(false);
+  });
+
+  it("works on the turned wheel's angles, past a full turn or below zero", () => {
+    expect(upsideDown(45 + 180)).toBe(true);
+    expect(upsideDown(90 + 720)).toBe(false);
+    expect(upsideDown(-45)).toBe(true);
   });
 });
 

@@ -71,6 +71,7 @@
     "spinAgain": "Spin again",
     "needNames": "Add at least one name to spin.",
     "winner": "The wheel picked",
+    "picked": "The wheel picked {name}.",
     "wheelLabel": "Wheel with {count, plural, one {# name} other {# names}}"
   },
   "dice": {

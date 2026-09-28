@@ -2,7 +2,7 @@ import { memo } from "react";
 import { markerVar } from "@/lib/markers";
 import { hashString, seededRandom } from "@/lib/random";
 import { sketchLine } from "@/lib/sketch";
-import { fitLabel, polar, sliceAngle, slicePath } from "./geometry";
+import { fitLabel, polar, sliceAngle, slicePath, upsideDown } from "./geometry";
 
 const SIZE = 400;
 const C = SIZE / 2;
@@ -21,8 +21,18 @@ function labelFont(count: number) {
   return Math.min(30, chord * 0.52);
 }
 
-/** The wheel face: marker-colored slices, drawn by hand. Rotation is applied by the parent. */
-export const WheelDisc = memo(function WheelDisc({ names }: { names: readonly string[] }) {
+/**
+ * The wheel face: marker-colored slices, drawn by hand. Rotation is applied by the
+ * parent; `restRotation` is where the wheel last stopped, so labels that would sit
+ * upside down there are turned to read the right way up.
+ */
+export const WheelDisc = memo(function WheelDisc({
+  names,
+  restRotation,
+}: {
+  names: readonly string[];
+  restRotation: number;
+}) {
   const count = names.length;
   const rand = seededRandom(hashString(names.join("\n")) + count);
   const slice = count > 0 ? sliceAngle(count) : 0;
@@ -66,18 +76,23 @@ export const WheelDisc = memo(function WheelDisc({ names }: { names: readonly st
 
           {fontSize >= MIN_FONT && (
             <g className="font-hand font-bold" fill="var(--on-marker)" fontSize={fontSize}>
-              {names.map((name, i) => (
-                <text
-                  key={name}
-                  x={C + LABEL_END}
-                  y={C}
-                  textAnchor="end"
-                  dominantBaseline="central"
-                  transform={`rotate(${(i + 0.5) * slice - 90} ${C} ${C})`}
-                >
-                  {fitLabel(name, fontSize, LABEL_LENGTH)}
-                </text>
-              ))}
+              {names.map((name, i) => {
+                const centre = (i + 0.5) * slice;
+                // Flipped labels start at the rim and read inward, so all of them read left to right.
+                const flip = upsideDown(centre + restRotation);
+                return (
+                  <text
+                    key={name}
+                    x={flip ? C - LABEL_END : C + LABEL_END}
+                    y={C}
+                    textAnchor={flip ? "start" : "end"}
+                    dominantBaseline="central"
+                    transform={`rotate(${centre - 90 + (flip ? 180 : 0)} ${C} ${C})`}
+                  >
+                    {fitLabel(name, fontSize, LABEL_LENGTH)}
+                  </text>
+                );
+              })}
             </g>
           )}
         </>

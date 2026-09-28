@@ -57,6 +57,7 @@
     "spinAgain": "한 번 더",
     "needNames": "이름을 하나 이상 적어야 돌릴 수 있어요.",
     "winner": "돌림판이 고른 사람",
+    "picked": "돌림판이 고른 사람은 {name}!",
     "wheelLabel": "이름 {count}개가 적힌 돌림판"
   },
   "dice": {

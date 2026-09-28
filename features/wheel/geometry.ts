@@ -35,6 +35,13 @@ export function polar(cx: number, cy: number, r: number, degrees: number) {
   return { x: cx + r * Math.sin(radians), y: cy - r * Math.cos(radians) };
 }
 
+/**
+ * Whether a label running outward from the hub along wheel-angle `degrees` (on
+ * screen, so including the wheel's turn) would read upside down: it points into
+ * the left half.
+ */
+export const upsideDown = (degrees: number) => mod(degrees, 360) > 180;
+
 /** SVG path of a pie slice between two wheel-angles. */
 export function slicePath(cx: number, cy: number, r: number, start: number, end: number): string {
   const a = polar(cx, cy, r, start);
