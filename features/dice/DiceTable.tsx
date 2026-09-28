@@ -24,7 +24,7 @@ import {
   type DieValue,
   type Vec3,
 } from "./faces";
-import { DIE_GEOMETRY, dieMaterials } from "./look";
+import { DIE_GEOMETRY, dieMaterials, disposeLook } from "./look";
 import { SETTLING, advanceSettle, type Settling } from "./settle";
 import { ELEVATION, FOV, fitView, restingSpots, screenPoint, throwStarts, type Bounds, type Pose } from "./table";
 
@@ -126,7 +126,15 @@ export function DiceTable(props: {
   onRest: (spots: readonly DieSpot[] | null) => void;
 }) {
   return (
-    <Canvas shadows="percentage" flat dpr={[1, 2]} frameloop="demand" gl={{ alpha: true }}>
+    // Nothing here reads pointer positions, so a scroll needn't re-measure the canvas and redraw it.
+    <Canvas
+      shadows="percentage"
+      flat
+      dpr={[1, 2]}
+      frameloop="demand"
+      gl={{ alpha: true }}
+      resize={{ scroll: false }}
+    >
       <Suspense fallback={null}>
         {/* Paused: the throw steps the world itself, and nothing runs between throws. */}
         <Physics paused timeStep="vary" gravity={GRAVITY}>
@@ -162,6 +170,10 @@ function DiceWorld({
 
   // A different set of dice starts over, lined up at rest.
   if (layout.key !== key && !layout.moving) setLayout(idleLayout(dice, view.bounds, layout.generation + 1));
+
+  // Runs inside the 3D tree, so the dice have already left the scene: a frame
+  // drawn afterwards can't hand the shared look back to the renderer going away.
+  useEffect(() => disposeLook, []);
 
   const bodies = useRef(new Map<string, RapierRigidBody>());
   const current = useRef<Throw | null>(null);

@@ -89,3 +89,21 @@ export function dieMaterials(body: string, pips: string, edge: string): MeshToon
   }
   return materials;
 }
+
+/**
+ * Frees everything above on the GPU, for when the table goes away. Every renderer
+ * that drew these keeps a dispose listener on them, so until they're disposed a
+ * left table's renderer, canvas and page stay in memory. Three.js uploads them
+ * again if a new table uses them.
+ */
+export function disposeLook() {
+  DIE_GEOMETRY.dispose();
+  TONES.dispose();
+  for (const materials of cache.values()) {
+    for (const material of materials) {
+      material.map?.dispose();
+      material.dispose();
+    }
+  }
+  cache.clear();
+}

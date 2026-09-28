@@ -1,25 +1,28 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { PICKER_DOODLES } from "@/components/icons";
 import { NamesCard } from "@/components/picker/NamesCard";
 import { PickerLayout } from "@/components/picker/PickerLayout";
-import { ResultDialog, Verdict } from "@/components/picker/ResultDialog";
+import { ResultDialog, Verdict, VerdictActions } from "@/components/picker/ResultDialog";
+import { StickyActions } from "@/components/picker/StickyActions";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
 import { cx } from "@/lib/cx";
 import { markerIndex } from "@/lib/markers";
-import { removeName, useNames } from "@/lib/names";
+import { useNames } from "@/lib/names";
 import { pickerHref } from "@/lib/site";
+import { usePersistedState } from "@/lib/use-persisted-state";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { useThemeColors } from "@/lib/use-theme-colors";
 import { leaders, playOff, type Round } from "./contest";
-import { DiceSettings, type DiceMode } from "./DiceSettings";
+import { DiceSettings } from "./DiceSettings";
 import type { DiceTableApi, DieSpec, DieSpot } from "./DiceTable";
 import { rollDie, type DieValue } from "./faces";
 import { NameTags, type NameTag } from "./NameTags";
+import { DEFAULT_SETTINGS, parseSettings, type DiceMode } from "./settings";
 import { Standings } from "./Standings";
 import { TableBoundary } from "./TableBoundary";
 
@@ -40,13 +43,15 @@ const DiceDoodle = PICKER_DOODLES.dice;
 
 export function DicePicker() {
   const t = useTranslations("dice");
-  const tResult = useTranslations("result");
   const names = useNames();
+  const statusId = useId();
   const colors = useThemeColors();
   const reducedMotion = useReducedMotion();
 
-  const [mode, setMode] = useState<DiceMode>("everyone");
-  const [diceCount, setDiceCount] = useState(2);
+  const rollButton = useRef<HTMLButtonElement>(null);
+
+  const [settings, setSettings] = usePersistedState("whozzie:dice:settings", DEFAULT_SETTINGS, parseSettings);
+  const { mode, count: diceCount } = settings;
   const [table, setTable] = useState<DiceTableApi | null>(null);
   // This browser couldn't start the 3D table; the dice still roll, just unseen.
   const [tableFailed, setTableFailed] = useState(false);
@@ -118,7 +123,7 @@ export function DicePicker() {
   }
 
   function changeMode(next: DiceMode) {
-    setMode(next);
+    setSettings({ ...settings, mode: next });
     setContest(null);
     setValues(null);
   }
@@ -128,8 +133,23 @@ export function DicePicker() {
     if (lastRound && top.length > 1) {
       status = t("tie", { value: Math.max(...lastRound.map((roll) => roll.value)), count: top.length });
     } else if (winner) status = t("highest", { name: winner });
-    else if (!rolling && names.length < MIN_PLAYERS) status = t("needTwo");
-    else if (!rolling && names.length > MAX_PLAYERS) {
+    else if (!rolling && names.length < MIN_PLAYERS) {
+      status = t.rich("needTwo", {
+        just: (chunks) => (
+          <button
+            type="button"
+            onClick={() => {
+              changeMode("justRoll");
+              // This button goes away with the switch; Roll is what comes next.
+              rollButton.current?.focus();
+            }}
+            className="text-ink underline underline-offset-4"
+          >
+            {chunks}
+          </button>
+        ),
+      });
+    } else if (!rolling && names.length > MAX_PLAYERS) {
       status = t.rich("tooMany", {
         max: MAX_PLAYERS,
         wheel: (chunks) => (
@@ -159,7 +179,7 @@ export function DicePicker() {
           onModeChange={changeMode}
           diceCount={diceCount}
           onDiceCountChange={(count) => {
-            setDiceCount(count);
+            setSettings({ ...settings, count });
             setValues(null);
           }}
           disabled={rolling}
@@ -167,48 +187,40 @@ export function DicePicker() {
       }
     >
       <div className="flex flex-col items-center gap-6">
-        <div
-          role="img"
-          aria-label={tableLabel}
-          className={cx("relative w-full", tableFailed ? "h-56" : "h-[clamp(340px,90vw,520px)]")}
-        >
-          {/* A faint doodle holds the table's place while it loads, while it has no dice, or if it can't run. */}
-          {(tableFailed || !table || dice.length === 0) && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center text-ink-faint">
-              <DiceDoodle className="chalk size-20 opacity-50" />
-              {tableFailed ? (
-                <p className="max-w-xs text-ink-soft">{t("noTable")}</p>
-              ) : (
-                !table && <p className="text-sm">{t("loading")}</p>
-              )}
-            </div>
-          )}
-          {!tableFailed && (
-            <TableBoundary onFail={() => setTableFailed(true)}>
-              <DiceTable dice={dice} onReady={setTable} onRest={setSpots} />
-            </TableBoundary>
-          )}
-          {tags.length > 0 && <NameTags tags={tags} winner={winner} />}
-        </div>
-
-        <div className="flex flex-col items-center gap-3">
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={roll}
-            // Mid-roll it only says so: truly disabling it would drop keyboard focus,
-            // and the result dialog would have nothing to hand focus back to.
-            aria-disabled={rolling}
-            disabled={!api || (mode === "everyone" && !enoughNames)}
+        {/* The table and what it shows, kept together above the action row so a result never lands under it. */}
+        <div className="flex w-full flex-col items-center gap-4">
+          <div
+            role="img"
+            aria-label={tableLabel}
+            className={cx("relative w-full", tableFailed ? "h-56" : "h-[clamp(300px,80vw,520px)]")}
           >
-            {rolling ? t("rolling") : t("roll")}
-          </Button>
+            {/* A faint doodle holds the table's place while it loads, while it has no dice, or if it can't run. */}
+            {(tableFailed || !table || dice.length === 0) && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center text-ink-faint">
+                <DiceDoodle className="chalk size-20 opacity-50" />
+                {tableFailed ? (
+                  <p className="max-w-xs text-ink-soft">{t("noTable")}</p>
+                ) : (
+                  !table && <p className="text-sm">{t("loading")}</p>
+                )}
+              </div>
+            )}
+            {!tableFailed && (
+              <TableBoundary onFail={() => setTableFailed(true)}>
+                <DiceTable dice={dice} onReady={setTable} onRest={setSpots} />
+              </TableBoundary>
+            )}
+            {tags.length > 0 && <NameTags tags={tags} winner={winner} />}
+          </div>
           {mode === "everyone" ? (
-            <p aria-live="polite" className="min-h-6 max-w-md text-center text-ink-soft">
+            <p id={statusId} aria-live="polite" className="min-h-6 max-w-md text-center text-ink-soft">
               {status}
             </p>
           ) : (
-            <p aria-live="polite" className="flex min-h-16 flex-wrap items-baseline justify-center gap-x-3 font-hand font-bold">
+            <p
+              aria-live="polite"
+              className="flex min-h-16 flex-wrap items-baseline justify-center gap-x-3 font-hand font-bold"
+            >
               {values ? (
                 <Sum values={values} />
               ) : (
@@ -217,6 +229,23 @@ export function DicePicker() {
             </p>
           )}
         </div>
+
+        <StickyActions sticky={mode === "justRoll" || enoughNames}>
+          <Button
+            ref={rollButton}
+            variant="primary"
+            size="lg"
+            onClick={roll}
+            // Unavailable only says so: truly disabling it would drop keyboard focus,
+            // and the result dialog would have nothing to hand focus back to.
+            aria-disabled={rolling || !api || (mode === "everyone" && !enoughNames)}
+            aria-describedby={mode === "everyone" && !enoughNames ? statusId : undefined}
+            // Fits "Rolling…" (and the longer Korean) too, so the button doesn't grow under the finger.
+            className="min-w-56"
+          >
+            {rolling ? t("rolling") : t("roll")}
+          </Button>
+        </StickyActions>
 
         {mode === "everyone" && rounds.length > 0 && (
           <section className="w-full max-w-lg" aria-label={t("standings")}>
@@ -231,20 +260,12 @@ export function DicePicker() {
         heading={t("winner")}
         actions={
           winner && (
-            <>
-              <Button variant="primary" onClick={roll} className="flex-1">
-                {t("rollAgain")}
-              </Button>
-              <Button
-                onClick={() => {
-                  removeName(winner);
-                  setDialogOpen(false);
-                }}
-                className="flex-1"
-              >
-                {tResult("removeName", { name: winner })}
-              </Button>
-            </>
+            <VerdictActions
+              again={t("rollAgain")}
+              onAgain={roll}
+              remove={winner}
+              onRemoved={() => setDialogOpen(false)}
+            />
           )
         }
       >
@@ -252,9 +273,15 @@ export function DicePicker() {
           <>
             <Verdict name={winner} />
             {rounds.length > 1 && (
-              <p className="-mt-4 mb-2 text-center text-sm text-ink-soft">{t("tieBreaks", { count: rounds.length - 1 })}</p>
+              <p className="mt-1 mb-4 text-center text-sm text-ink-soft">{t("tieBreaks", { count: rounds.length - 1 })}</p>
             )}
-            <div className="max-h-[min(20rem,40vh)] overflow-y-auto border-y-2 border-rule">
+            {/* Focusable so the keyboard can scroll it where the browser won't (Safari). */}
+            <div
+              role="region"
+              aria-label={t("standings")}
+              tabIndex={0}
+              className="max-h-[min(20rem,40vh)] overflow-y-auto border-y-2 border-rule"
+            >
               <Standings rounds={rounds} names={names} />
             </div>
           </>

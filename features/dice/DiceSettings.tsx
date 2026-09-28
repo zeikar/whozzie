@@ -1,10 +1,9 @@
 import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { MAX_DICE, type DiceMode } from "./settings";
 
-export type DiceMode = "everyone" | "justRoll";
-
-const DICE_COUNTS = ["1", "2", "3", "4", "5", "6"] as const;
+const DICE_COUNTS = Array.from({ length: MAX_DICE }, (_, i) => String(i + 1));
 
 /** How to roll, and for plain dice, how many. */
 export function DiceSettings({
@@ -42,7 +41,9 @@ export function DiceSettings({
           options={DICE_COUNTS.map((count) => ({ value: count, label: count }))}
           onChange={(count) => onDiceCountChange(Number(count))}
           disabled={disabled}
-          className="mt-4"
+          // Bare numbers in sans: the handwriting's "1" reads as an I. The control
+          // only takes text labels, so this styles its option spans from outside.
+          className="mt-4 [&_label>span]:font-sans [&_label>span]:tabular-nums"
         />
       )}
     </Card>
