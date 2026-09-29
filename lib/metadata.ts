@@ -12,6 +12,12 @@ const OG_LOCALE = { en: "en_US", ko: "ko_KR" } satisfies Record<Locale, string>;
 export const localizedUrl = (locale: Locale, href: string) =>
   `${SITE_URL}${getPathname({ locale, href })}`;
 
+/** hreflang alternates for `href`: every locale, plus x-default on the unprefixed English URL. */
+export const languageAlternates = (href: string) => ({
+  ...Object.fromEntries(routing.locales.map((l) => [l, localizedUrl(l, href)])),
+  "x-default": localizedUrl(routing.defaultLocale, href),
+});
+
 /** Title, description, canonical and hreflang alternates for a page, from its `meta` messages. */
 export async function buildMetadata(
   locale: Locale,
@@ -28,13 +34,7 @@ export async function buildMetadata(
     title,
     description,
     keywords: t.raw("meta.keywords") as string[],
-    alternates: {
-      canonical: url,
-      languages: {
-        ...Object.fromEntries(routing.locales.map((l) => [l, localizedUrl(l, href)])),
-        "x-default": localizedUrl(routing.defaultLocale, href),
-      },
-    },
+    alternates: { canonical: url, languages: languageAlternates(href) },
     openGraph: {
       title,
       description,

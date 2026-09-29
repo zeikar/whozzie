@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="4 1 56 56">
+  <style>@media (prefers-color-scheme: dark) { g { stroke: #eef2e8 } .ink { fill: #eef2e8 } }</style>
+  <g stroke="#1c2a4d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 32 32.2 9.5A22.6 22.6 0 0 1 54.4 31.6Z" fill="#ffd84a"/>
+    <path d="M32 32 54.4 31.6A22.4 22.4 0 0 1 32.3 54.6Z" fill="#ff95c2"/>
+    <path d="M32 32 32.3 54.6A22.7 22.7 0 0 1 9.4 32.3Z" fill="#7fda9d"/>
+    <path d="M32 32 9.4 32.3A22.5 22.5 0 0 1 32.2 9.5Z" fill="#82bfff"/>
+    <path d="M32.4 8.9c12.8-.3 22.9 10.3 22.6 23.3-.3 12.4-10.5 22.5-23.1 22.4C19.2 54.4 9 44.1 9.1 31.5 9.3 19.1 19.6 9.3 32.4 8.9Z" fill="none"/>
+    <path class="ink" d="M27.6 3.2 32.3 11.6l4.5-8.4c-3.1-.5-6.2-.5-9.2 0Z" fill="#1c2a4d"/>
+  </g>
+  <circle class="ink" cx="32" cy="32" r="3.4" fill="#1c2a4d"/>
+</svg>

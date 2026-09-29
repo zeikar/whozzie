@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Gaegu, Gowun_Dodum } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SketchDefs } from "@/components/site/SketchDefs";
@@ -22,6 +22,16 @@ const sans = Gowun_Dodum({ weight: "400", subsets: ["latin"], variable: "--font-
 // The one place metadataBase is set: every page's URLs resolve against it.
 export const metadata: Metadata = { metadataBase: new URL(SITE_URL) };
 
+// The paper (--paper), so the mobile address bar reads as part of the notebook
+// or the chalkboard rather than a band the page never draws. It follows the OS
+// scheme: a theme picked with the site's own switch doesn't reach it.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f5f8fa" },
+    { media: "(prefers-color-scheme: dark)", color: "#213831" },
+  ],
+};
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -34,12 +44,20 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
+  // Each picker's `about` notes render on the server only (PickerNotes), so keep
+  // them out of the messages the provider ships to the browser on every page.
+  const messages = Object.fromEntries(
+    Object.entries(await getMessages()).map(([namespace, keys]) => [
+      namespace,
+      Object.fromEntries(Object.entries(keys).filter(([key]) => key !== "about")),
+    ]),
+  );
 
   return (
     <html lang={locale} className={`${hand.variable} ${handBold.variable} ${sans.variable}`} suppressHydrationWarning>
       <body>
         <SketchDefs />
-        <NextIntlClientProvider>
+        <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
             <div className="relative isolate">
               {/* The notebook's red margin rule. */}

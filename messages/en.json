@@ -1,7 +1,7 @@
 {
   "home": {
     "meta": {
-      "title": "Whozzie – Who's it gonna be?",
+      "title": "Whozzie – Random Name Picker: Wheel, Dice & Ladder Game",
       "description": "Pick someone at random, fairly. Write the names once, then spin a wheel, roll dice, or play the ladder game.",
       "keywords": [
         "random name picker",
@@ -14,7 +14,7 @@
       ]
     },
     "heading": "Who's it gonna be?",
-    "lede": "Write the names down once. Then spin, roll, or follow the lines to find out.",
+    "lede": "A random name picker for groups. Write the names down once, then spin the wheel, roll the dice, or play the ladder game.",
     "choose": "Pick a way to decide"
   },
   "site": {
@@ -52,7 +52,7 @@
   },
   "wheel": {
     "name": "Wheel",
-    "summary": "Spin it and land on one name.",
+    "summary": "The pointer stops on one name.",
     "meta": {
       "title": "Spin the Wheel – Random Name Picker | Whozzie",
       "description": "Enter names, spin the wheel, and let it stop on one. Fair, fast, and free for classrooms, teams, and parties.",
@@ -66,6 +66,22 @@
     },
     "heading": "Spin the wheel",
     "lede": "Add names, spin, and see where the pointer stops.",
+    "about": {
+      "how": {
+        "title": "How to use the wheel",
+        "step1": "Type names one at a time, or paste a whole list, one per line or separated by commas. It holds up to 100 names.",
+        "step2": "Press Spin. The name the pointer lands on is picked.",
+        "step3": "Picking more than one? Take the winner off the list with the Remove button in the result, then spin again, so no one comes up twice."
+      },
+      "fair": {
+        "title": "Is it fair?",
+        "body": "Every name gets an equal slice, so everyone has the same chance. The pick is drawn in your browser with cryptographic randomness (Web Crypto), the kind used for security, so no one can predict it."
+      },
+      "uses": {
+        "title": "Good for",
+        "body": "Calling on students, choosing who presents first, drawing a giveaway winner, or deciding who buys coffee. Your list stays in this browser, so the same names are ready to <dice>roll the dice</dice> or <ladder>play the ladder game</ladder>."
+      }
+    },
     "spin": "Spin",
     "spinning": "Spinning…",
     "spinAgain": "Spin again",
@@ -79,11 +95,27 @@
     "summary": "Everyone rolls. Highest number wins.",
     "meta": {
       "title": "Roll the Dice – 3D Dice Roller | Whozzie",
-      "description": "Roll real 3D dice for everyone on your list, or just roll a few. Physics decides who wins.",
+      "description": "Roll 3D dice for everyone on your list: the highest roll wins and ties roll again. Or just roll 1–6 dice and see the total. Free, no sign-up.",
       "keywords": ["3d dice roller", "roll dice online", "virtual dice", "dice for names", "random dice"]
     },
     "heading": "Roll the dice",
     "lede": "Everyone gets a die. Roll them all and see who comes out on top.",
+    "about": {
+      "how": {
+        "title": "How the dice pick",
+        "step1": "Add 2–12 names. Each person gets a die in the same color as their name.",
+        "step2": "Press Roll. Whoever rolls highest is picked. A tie for first? Just those people roll again.",
+        "step3": "Everyone gets a place too. People tied further down share their place."
+      },
+      "fair": {
+        "title": "Is it fair?",
+        "body": "Each die is thrown from a random spot, angle, and speed, all drawn from your browser's cryptographic randomness (Web Crypto). A physics engine tumbles it across the table, and the face that lands on top is the roll."
+      },
+      "uses": {
+        "title": "Good for",
+        "body": "Deciding who goes first in a game, who takes the last slice, or who pays for snacks. For a turn order with no shared places, fill the <ladder>ladder game</ladder> with the Order results. Lost the dice for a board game? Switch to Just roll mode to throw up to six plain dice and see the total. More than 12 people? The <wheel>wheel</wheel> takes up to 100 names."
+      }
+    },
     "howTo": "How to roll",
     "mode": "Mode",
     "everyone": "Everyone rolls",
@@ -113,12 +145,28 @@
     "name": "Ladder",
     "summary": "Follow the lines to match everyone with a result.",
     "meta": {
-      "title": "Ladder Game – Random Matching | Whozzie",
+      "title": "Ladder Game Online (Amidakuji / Ghost Leg) | Whozzie",
       "description": "Play the ladder game (Amidakuji) online. Enter names and results, then follow the lines to see who gets what.",
       "keywords": ["ladder game", "amidakuji", "ghost leg", "random matching", "ladder lottery"]
     },
     "heading": "Ladder game",
-    "lede": "Put names on top and results at the bottom, then follow the lines down.",
+    "lede": "Put names on top and results at the bottom, then follow the lines down. It's also called Amidakuji or ghost leg.",
+    "about": {
+      "how": {
+        "title": "How to play",
+        "step1": "Add 2–12 names, then choose the results: one winner, an order (1st, 2nd, …), or your own, like prizes or chores.",
+        "step2": "Pick a name to follow its line down. It crosses every rung it meets and lands on one result.",
+        "step3": "Press Reveal all to uncover the rest at once, or New ladder to start over."
+      },
+      "fair": {
+        "title": "Is it fair?",
+        "body": "Every line ends at its own spot along the bottom, so everyone gets exactly one result. The results are shuffled and taped over, and the names are placed on the lines in random order, so everyone has the same chance at every result."
+      },
+      "uses": {
+        "title": "Good for",
+        "body": "Handing out chores or prizes, assigning seats, setting a turn order, or deciding who pays for lunch. Just need one name? <wheel>Spin the wheel</wheel>."
+      }
+    },
     "ladderLabel": "Ladder for {count} people",
     "hint": "Pick a name to follow their line down.",
     "following": "Following {name}'s line…",

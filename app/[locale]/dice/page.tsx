@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
+import { PickerNotes } from "@/components/picker/PickerNotes";
 import { DicePicker } from "@/features/dice/DicePicker";
 import { localeFrom } from "@/i18n/locale";
 import { buildMetadata } from "@/lib/metadata";
@@ -10,5 +11,10 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/dice">):
 
 export default async function DicePage({ params }: PageProps<"/[locale]/dice">) {
   setRequestLocale(await localeFrom(params));
-  return <DicePicker />;
+  return (
+    <>
+      <DicePicker />
+      <PickerNotes picker="dice" />
+    </>
+  );
 }

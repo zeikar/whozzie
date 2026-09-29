@@ -3,6 +3,9 @@ import { getLocale } from "next-intl/server";
 import LocaleLayout from "./[locale]/layout";
 import LocaleNotFound from "./[locale]/not-found";
 
+// Rendered as a component here, the layout doesn't apply its route exports.
+export { viewport } from "./[locale]/layout";
+
 // Every URL that matches no route lands here. That's the only kind of 404 Next
 // renders on the server (a notFound() thrown by a page comes back as an empty shell
 // that JavaScript fills in), so unknown paths aren't routed into [locale] at all:
